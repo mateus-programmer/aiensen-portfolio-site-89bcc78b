@@ -1,4 +1,6 @@
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import CategoryCard from "./CategoryCard";
 import cardPromptsImagens from "@/assets/card-prompts-imagens.jpg";
 import cardPromptsVideos from "@/assets/card-prompts-videos.jpg";
@@ -6,45 +8,45 @@ import cardCursos from "@/assets/card-cursos.jpg";
 import cardSermoes from "@/assets/card-sermoes.jpg";
 import cardTematicos from "@/assets/card-tematicos.jpg";
 
-const categories = [
-  {
-    title: "Prompts para Imagens",
-    description: "Coleção de prompts otimizados para geração de imagens com IA — arte digital, fotorrealismo, conceitos e mais.",
-    image: cardPromptsImagens,
-    tags: ["IA Generativa", "Imagens"],
-    neonColor: "yellow" as const,
-  },
-  {
-    title: "Prompts para Vídeos",
-    description: "Prompts para criação de vídeos com durações de 5s a 60s — otimizados para as melhores plataformas de IA.",
-    image: cardPromptsVideos,
-    tags: ["Vídeo", "5s–60s"],
-    neonColor: "cyan" as const,
-  },
-  {
-    title: "Cursos de Programação",
-    description: "Trilhas completas de Python, JavaScript e Java — do básico ao avançado com projetos práticos.",
-    image: cardCursos,
-    tags: ["Python", "JavaScript", "Java"],
-    neonColor: "yellow" as const,
-  },
-  {
-    title: "Prompts para Sermões",
-    description: "Prompts especializados para sermões expositivos, temáticos e textuais com estrutura profissional.",
-    image: cardSermoes,
-    tags: ["Expositivo", "Temático", "Textual"],
-    neonColor: "purple" as const,
-  },
-  {
-    title: "Prompts Temáticos",
-    description: "Conteúdos aprofundados sobre feminismo, ideologia de gênero, política, Bíblia, teologia reformada e mais.",
-    image: cardTematicos,
-    tags: ["Teologia", "Política", "Temas"],
-    neonColor: "purple" as const,
-  },
+const fallbackImages: Record<string, string> = {
+  "Prompts para Imagens": cardPromptsImagens,
+  "Prompts para Vídeos": cardPromptsVideos,
+  "Cursos de Programação": cardCursos,
+  "Prompts para Sermões": cardSermoes,
+  "Prompts Temáticos": cardTematicos,
+};
+
+const staticCategories = [
+  { title: "Prompts para Imagens", description: "Coleção de prompts otimizados para geração de imagens com IA — arte digital, fotorrealismo, conceitos e mais.", image: cardPromptsImagens, tags: ["IA Generativa", "Imagens"], neonColor: "yellow" as const },
+  { title: "Prompts para Vídeos", description: "Prompts para criação de vídeos com durações de 5s a 60s — otimizados para as melhores plataformas de IA.", image: cardPromptsVideos, tags: ["Vídeo", "5s–60s"], neonColor: "cyan" as const },
+  { title: "Cursos de Programação", description: "Trilhas completas de Python, JavaScript e Java — do básico ao avançado com projetos práticos.", image: cardCursos, tags: ["Python", "JavaScript", "Java"], neonColor: "yellow" as const },
+  { title: "Prompts para Sermões", description: "Prompts especializados para sermões expositivos, temáticos e textuais com estrutura profissional.", image: cardSermoes, tags: ["Expositivo", "Temático", "Textual"], neonColor: "purple" as const },
+  { title: "Prompts Temáticos", description: "Conteúdos aprofundados sobre feminismo, ideologia de gênero, política, Bíblia, teologia reformada e mais.", image: cardTematicos, tags: ["Teologia", "Política", "Temas"], neonColor: "purple" as const },
 ];
 
 const CategoriesSection = () => {
+  const { data: dbCategories } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("categories")
+        .select("*")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true });
+      return data;
+    },
+  });
+
+  const categories = dbCategories && dbCategories.length > 0
+    ? dbCategories.map((cat) => ({
+        title: cat.title,
+        description: cat.description || "",
+        image: cat.image_url || fallbackImages[cat.title] || cardPromptsImagens,
+        tags: cat.tags || [],
+        neonColor: (cat.neon_color as "yellow" | "cyan" | "purple") || "yellow",
+      }))
+    : staticCategories;
+
   return (
     <section id="categorias" className="py-24 px-6">
       <div className="max-w-6xl mx-auto">
