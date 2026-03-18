@@ -40,7 +40,7 @@ const HeroSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.8 }}
           >
-            Sua biblioteca tecnológica futurista — prompts, cursos e conteúdos organizados com inteligência artificial.
+            Minha biblioteca tecnológica futurista — prompts, cursos e conteúdos organizados feitos por mim e com inteligência artificial.
           </motion.p>
 
           <motion.div
