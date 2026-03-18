@@ -9,7 +9,7 @@ const FooterSection = () => {
           <span className="text-foreground">ensen</span>
         </h2>
         <p className="font-alt text-sm text-muted-foreground mb-8 max-w-md mx-auto">
-          All In One With AI — Sua biblioteca tecnológica futurista.
+          All In One With AI — Minha biblioteca tecnológica futurista.
         </p>
 
         <div className="flex justify-center gap-6 mb-10">
