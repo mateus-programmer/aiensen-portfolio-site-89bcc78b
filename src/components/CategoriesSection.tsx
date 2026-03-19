@@ -39,6 +39,7 @@ const CategoriesSection = () => {
 
   const categories = dbCategories && dbCategories.length > 0
     ? dbCategories.map((cat) => ({
+        id: cat.id,
         title: cat.title,
         description: cat.description || "",
         image: cat.image_url || fallbackImages[cat.title] || cardPromptsImagens,
