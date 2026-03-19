@@ -1,0 +1,189 @@
+import { useParams, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { motion } from "framer-motion";
+import { ArrowLeft, FileText } from "lucide-react";
+import type { Tables } from "@/integrations/supabase/types";
+
+type Category = Tables<"categories">;
+type ContentItem = Tables<"content_items">;
+
+const neonTextClass: Record<string, string> = {
+  yellow: "neon-text-yellow",
+  cyan: "neon-text-cyan",
+  purple: "neon-text-purple",
+};
+
+const tagColors: Record<string, string> = {
+  yellow: "bg-neon-yellow/10 text-neon-yellow border-neon-yellow/20",
+  cyan: "bg-neon-cyan/10 text-neon-cyan border-neon-cyan/20",
+  purple: "bg-neon-purple/10 text-neon-purple border-neon-purple/20",
+};
+
+const accentBorder: Record<string, string> = {
+  yellow: "border-l-neon-yellow",
+  cyan: "border-l-neon-cyan",
+  purple: "border-l-neon-purple",
+};
+
+const CategoryPage = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+
+  const { data: category, isLoading: loadingCategory } = useQuery({
+    queryKey: ["category", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("categories")
+        .select("*")
+        .eq("id", id!)
+        .single();
+      if (error) throw error;
+      return data as Category;
+    },
+    enabled: !!id,
+  });
+
+  const { data: items, isLoading: loadingItems } = useQuery({
+    queryKey: ["content_items", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("content_items")
+        .select("*")
+        .eq("category_id", id!)
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return data as ContentItem[];
+    },
+    enabled: !!id,
+  });
+
+  const isLoading = loadingCategory || loadingItems;
+  const color = category?.neon_color || "yellow";
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!category) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
+        <p className="text-muted-foreground font-alt">Categoria não encontrada.</p>
+        <button onClick={() => navigate("/")} className="text-primary font-display text-sm hover:underline">
+          Voltar ao início
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="border-b border-border bg-card/80 backdrop-blur-md sticky top-0 z-30">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center gap-4">
+          <button
+            onClick={() => navigate("/")}
+            className="p-2 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft size={20} />
+          </button>
+          <h1 className="font-display text-lg font-bold truncate">
+            <span className={neonTextClass[color]}>{category.title}</span>
+          </h1>
+        </div>
+      </header>
+
+      <div className="max-w-6xl mx-auto px-6 py-10">
+        {/* Category info */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-10"
+        >
+          {category.description && (
+            <p className="font-body text-muted-foreground max-w-2xl text-sm leading-relaxed">
+              {category.description}
+            </p>
+          )}
+          {category.tags && category.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-4">
+              {category.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className={`text-xs font-display tracking-wider uppercase px-2.5 py-1 rounded border ${tagColors[color]}`}
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </motion.div>
+
+        {/* Content items */}
+        {items && items.length > 0 ? (
+          <div className="grid gap-4">
+            {items.map((item, i) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.4, delay: i * 0.05 }}
+                className={`bg-card border border-border rounded-xl p-5 border-l-4 ${accentBorder[color]} hover:bg-secondary/30 transition-colors`}
+              >
+                <div className="flex items-start gap-4">
+                  <div className="mt-0.5 text-muted-foreground">
+                    <FileText size={18} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-display text-sm font-semibold text-foreground mb-1">
+                      {item.title}
+                    </h3>
+                    {item.description && (
+                      <p className="font-body text-xs text-muted-foreground leading-relaxed mb-2">
+                        {item.description}
+                      </p>
+                    )}
+                    {item.content && (
+                      <div className="bg-secondary/50 rounded-lg p-4 mt-3">
+                        <pre className="font-body text-xs text-foreground/80 whitespace-pre-wrap break-words">
+                          {item.content}
+                        </pre>
+                      </div>
+                    )}
+                    {item.tags && item.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 mt-3">
+                        {item.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="text-[10px] font-display tracking-wider uppercase px-2 py-0.5 rounded bg-secondary text-muted-foreground"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-20">
+            <FileText size={40} className="mx-auto text-muted-foreground/30 mb-4" />
+            <p className="font-alt text-muted-foreground text-sm">
+              Nenhum conteúdo disponível nesta categoria ainda.
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default CategoryPage;

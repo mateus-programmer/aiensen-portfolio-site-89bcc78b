@@ -23,9 +23,16 @@ const tagColors = {
   purple: "bg-neon-purple/10 text-neon-purple border-neon-purple/20",
 };
 
-const CategoryCard = ({ title, description, image, tags, neonColor, index }: CategoryCardProps) => {
+const CategoryCard = ({ id, title, description, image, tags, neonColor, index }: CategoryCardProps) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    if (id) navigate(`/categoria/${id}`);
+  };
+
   return (
     <motion.div
+      onClick={handleClick}
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
