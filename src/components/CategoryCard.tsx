@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 interface CategoryCardProps {
+  id?: string;
   title: string;
   description: string;
   image: string;
