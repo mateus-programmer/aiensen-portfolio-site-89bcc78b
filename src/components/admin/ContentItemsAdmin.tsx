@@ -300,6 +300,9 @@ const ContentItemsAdmin = ({ categories }: ContentItemsAdminProps) => {
           <table className="w-full">
             <thead>
               <tr className="border-b border-border">
+                <th onClick={() => handleSort("sort_order")} className="text-left px-5 py-3 font-display text-xs uppercase tracking-wider text-muted-foreground cursor-pointer hover:text-foreground transition-colors select-none w-16">
+                  <span className="inline-flex items-center gap-1.5"># <SortIcon column="sort_order" /></span>
+                </th>
                 <th onClick={() => handleSort("title")} className="text-left px-5 py-3 font-display text-xs uppercase tracking-wider text-muted-foreground cursor-pointer hover:text-foreground transition-colors select-none">
                   <span className="inline-flex items-center gap-1.5">Título <SortIcon column="title" /></span>
                 </th>
@@ -316,6 +319,7 @@ const ContentItemsAdmin = ({ categories }: ContentItemsAdminProps) => {
             <tbody>
               {items.map((item) => (
                 <tr key={item.id} className="border-b border-border/50 hover:bg-secondary/30 transition-colors">
+                  <td className="px-5 py-3 font-mono text-xs text-muted-foreground w-16">{item.sort_order}</td>
                   <td className="px-5 py-3 font-body text-sm text-foreground max-w-[200px] truncate">{item.title}</td>
                   <td className="px-5 py-3 hidden md:table-cell">
                     <div className="flex flex-wrap gap-1">
@@ -342,7 +346,7 @@ const ContentItemsAdmin = ({ categories }: ContentItemsAdminProps) => {
               ))}
               {items.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-5 py-10 text-center text-muted-foreground font-alt text-sm">
+                  <td colSpan={6} className="px-5 py-10 text-center text-muted-foreground font-alt text-sm">
                     Nenhum conteúdo nesta categoria.
                   </td>
                 </tr>
