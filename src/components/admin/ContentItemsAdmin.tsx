@@ -24,6 +24,8 @@ const ContentItemsAdmin = ({ categories }: ContentItemsAdminProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [allTags, setAllTags] = useState<string[]>([]);
   const [selectedTag, setSelectedTag] = useState<string>("");
+  const [sortColumn, setSortColumn] = useState<string>("sort_order");
+  const [sortAsc, setSortAsc] = useState(true);
   const [editingItem, setEditingItem] = useState<ContentItem | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
