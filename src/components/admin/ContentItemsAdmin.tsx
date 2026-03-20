@@ -40,7 +40,10 @@ const ContentItemsAdmin = ({ categories }: ContentItemsAdminProps) => {
   }, [categories, selectedCategoryId]);
 
   useEffect(() => {
-    if (selectedCategoryId) fetchItems();
+    if (selectedCategoryId) {
+      setCurrentPage(1);
+      fetchItems(1);
+    }
   }, [selectedCategoryId]);
 
   const fetchItems = async () => {
