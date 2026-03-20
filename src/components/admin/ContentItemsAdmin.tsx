@@ -319,6 +319,7 @@ const ContentItemsAdmin = ({ categories }: ContentItemsAdminProps) => {
             <tbody>
               {items.map((item) => (
                 <tr key={item.id} className="border-b border-border/50 hover:bg-secondary/30 transition-colors">
+                  <td className="px-5 py-3 font-mono text-xs text-muted-foreground w-16">{item.sort_order}</td>
                   <td className="px-5 py-3 font-body text-sm text-foreground max-w-[200px] truncate">{item.title}</td>
                   <td className="px-5 py-3 hidden md:table-cell">
                     <div className="flex flex-wrap gap-1">
