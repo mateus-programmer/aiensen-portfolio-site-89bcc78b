@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Eye, EyeOff } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, EyeOff, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Tables, TablesInsert } from "@/integrations/supabase/types";
 
 type Category = Tables<"categories">;
@@ -14,8 +14,12 @@ interface ContentItemsAdminProps {
 const inputClass = "w-full bg-secondary border border-border rounded-lg px-4 py-2.5 text-foreground font-body text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors";
 const labelClass = "block font-alt text-xs text-muted-foreground mb-1.5 uppercase tracking-wider";
 
+const ITEMS_PER_PAGE = 10;
+
 const ContentItemsAdmin = ({ categories }: ContentItemsAdminProps) => {
   const [items, setItems] = useState<ContentItem[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const [editingItem, setEditingItem] = useState<ContentItem | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -36,17 +40,38 @@ const ContentItemsAdmin = ({ categories }: ContentItemsAdminProps) => {
   }, [categories, selectedCategoryId]);
 
   useEffect(() => {
-    if (selectedCategoryId) fetchItems();
+    if (selectedCategoryId) {
+      setCurrentPage(1);
+      fetchItems(1);
+    }
   }, [selectedCategoryId]);
 
-  const fetchItems = async () => {
+  const fetchItems = async (page = currentPage) => {
+    const from = (page - 1) * ITEMS_PER_PAGE;
+    const to = from + ITEMS_PER_PAGE - 1;
+
+    const { count } = await supabase
+      .from("content_items")
+      .select("*", { count: "exact", head: true })
+      .eq("category_id", selectedCategoryId);
+
+    setTotalCount(count || 0);
+
     const { data, error } = await supabase
       .from("content_items")
       .select("*")
       .eq("category_id", selectedCategoryId)
-      .order("sort_order", { ascending: true });
+      .order("sort_order", { ascending: true })
+      .range(from, to);
     if (error) toast.error("Erro ao carregar conteúdos");
     else setItems(data || []);
+  };
+
+  const totalPages = Math.max(1, Math.ceil(totalCount / ITEMS_PER_PAGE));
+
+  const goToPage = (page: number) => {
+    setCurrentPage(page);
+    fetchItems(page);
   };
 
   const resetForm = () => {
@@ -233,6 +258,55 @@ const ContentItemsAdmin = ({ categories }: ContentItemsAdminProps) => {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between px-5 py-3 border-t border-border">
+            <span className="text-xs text-muted-foreground font-alt">
+              Página {currentPage} de {totalPages} ({totalCount} itens)
+            </span>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage <= 1}
+                className="p-1.5 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
+                .reduce<number[]>((acc, p) => {
+                  if (acc.length > 0 && p - acc[acc.length - 1] > 1) acc.push(-1);
+                  acc.push(p);
+                  return acc;
+                }, [])
+                .map((p, i) =>
+                  p === -1 ? (
+                    <span key={`e${i}`} className="px-1 text-muted-foreground text-xs">…</span>
+                  ) : (
+                    <button
+                      key={p}
+                      onClick={() => goToPage(p)}
+                      className={`min-w-[28px] h-7 rounded text-xs font-display transition-all ${
+                        p === currentPage
+                          ? "bg-primary text-primary-foreground shadow-[0_0_10px_hsl(48_100%_50%/0.2)]"
+                          : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  )
+                )}
+              <button
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={currentPage >= totalPages}
+                className="p-1.5 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
