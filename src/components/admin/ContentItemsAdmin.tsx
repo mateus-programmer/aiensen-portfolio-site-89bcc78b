@@ -76,7 +76,7 @@ const ContentItemsAdmin = ({ categories }: ContentItemsAdminProps) => {
       .from("content_items")
       .select("*")
       .eq("category_id", selectedCategoryId)
-      .order("sort_order", { ascending: true })
+      .order(sortColumn, { ascending: sortAsc })
       .range(from, to);
 
     if (searchQuery.trim()) {
