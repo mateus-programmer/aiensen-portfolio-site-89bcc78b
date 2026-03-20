@@ -300,6 +300,9 @@ const ContentItemsAdmin = ({ categories }: ContentItemsAdminProps) => {
           <table className="w-full">
             <thead>
               <tr className="border-b border-border">
+                <th onClick={() => handleSort("sort_order")} className="text-left px-5 py-3 font-display text-xs uppercase tracking-wider text-muted-foreground cursor-pointer hover:text-foreground transition-colors select-none w-16">
+                  <span className="inline-flex items-center gap-1.5"># <SortIcon column="sort_order" /></span>
+                </th>
                 <th onClick={() => handleSort("title")} className="text-left px-5 py-3 font-display text-xs uppercase tracking-wider text-muted-foreground cursor-pointer hover:text-foreground transition-colors select-none">
                   <span className="inline-flex items-center gap-1.5">Título <SortIcon column="title" /></span>
                 </th>
