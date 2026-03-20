@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Eye, EyeOff, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, EyeOff, ChevronLeft, ChevronRight, Search, X } from "lucide-react";
 import type { Tables, TablesInsert } from "@/integrations/supabase/types";
 
 type Category = Tables<"categories">;
@@ -21,6 +21,9 @@ const ContentItemsAdmin = ({ categories }: ContentItemsAdminProps) => {
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [allTags, setAllTags] = useState<string[]>([]);
+  const [selectedTag, setSelectedTag] = useState<string>("");
   const [editingItem, setEditingItem] = useState<ContentItem | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -44,27 +47,55 @@ const ContentItemsAdmin = ({ categories }: ContentItemsAdminProps) => {
       setCurrentPage(1);
       fetchItems(1);
     }
-  }, [selectedCategoryId]);
+  }, [selectedCategoryId, searchQuery, selectedTag]);
 
   const fetchItems = async (page = currentPage) => {
     const from = (page - 1) * ITEMS_PER_PAGE;
     const to = from + ITEMS_PER_PAGE - 1;
 
-    const { count } = await supabase
+    // Build base query for count
+    let countQuery = supabase
       .from("content_items")
       .select("*", { count: "exact", head: true })
       .eq("category_id", selectedCategoryId);
 
+    if (searchQuery.trim()) {
+      countQuery = countQuery.ilike("title", `%${searchQuery.trim()}%`);
+    }
+    if (selectedTag) {
+      countQuery = countQuery.contains("tags", [selectedTag]);
+    }
+
+    const { count } = await countQuery;
     setTotalCount(count || 0);
 
-    const { data, error } = await supabase
+    // Build data query
+    let dataQuery = supabase
       .from("content_items")
       .select("*")
       .eq("category_id", selectedCategoryId)
       .order("sort_order", { ascending: true })
       .range(from, to);
+
+    if (searchQuery.trim()) {
+      dataQuery = dataQuery.ilike("title", `%${searchQuery.trim()}%`);
+    }
+    if (selectedTag) {
+      dataQuery = dataQuery.contains("tags", [selectedTag]);
+    }
+
+    const { data, error } = await dataQuery;
     if (error) toast.error("Erro ao carregar conteúdos");
     else setItems(data || []);
+
+    // Fetch all tags for this category (unfiltered)
+    const { data: allItems } = await supabase
+      .from("content_items")
+      .select("tags")
+      .eq("category_id", selectedCategoryId);
+    const tagSet = new Set<string>();
+    (allItems || []).forEach(item => (item.tags || []).forEach(t => tagSet.add(t)));
+    setAllTags(Array.from(tagSet).sort());
   };
 
   const totalPages = Math.max(1, Math.ceil(totalCount / ITEMS_PER_PAGE));
@@ -153,6 +184,44 @@ const ContentItemsAdmin = ({ categories }: ContentItemsAdminProps) => {
         >
           <Plus size={16} /> Novo Conteúdo
         </button>
+      </div>
+
+      {/* Search & Tag Filter */}
+      <div className="flex items-center gap-3 mb-6 flex-wrap">
+        <div className="relative flex-1 min-w-[200px] max-w-sm">
+          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Buscar por título..."
+            className="w-full bg-secondary border border-border rounded-lg pl-9 pr-8 py-2 text-foreground font-body text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+          />
+          {searchQuery && (
+            <button onClick={() => setSearchQuery("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
+              <X size={14} />
+            </button>
+          )}
+        </div>
+        {allTags.length > 0 && (
+          <select
+            value={selectedTag}
+            onChange={(e) => setSelectedTag(e.target.value)}
+            className="bg-secondary border border-border rounded-lg px-3 py-2 text-foreground font-body text-sm focus:outline-none focus:border-primary transition-colors"
+          >
+            <option value="">Todas as tags</option>
+            {allTags.map((tag) => (
+              <option key={tag} value={tag}>{tag}</option>
+            ))}
+          </select>
+        )}
+        {(searchQuery || selectedTag) && (
+          <button
+            onClick={() => { setSearchQuery(""); setSelectedTag(""); }}
+            className="text-xs text-muted-foreground hover:text-foreground font-display uppercase tracking-wider transition-colors"
+          >
+            Limpar filtros
+          </button>
+        )}
       </div>
 
       {/* Form */}
