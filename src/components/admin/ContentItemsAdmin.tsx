@@ -21,6 +21,9 @@ const ContentItemsAdmin = ({ categories }: ContentItemsAdminProps) => {
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [allTags, setAllTags] = useState<string[]>([]);
+  const [selectedTag, setSelectedTag] = useState<string>("");
   const [editingItem, setEditingItem] = useState<ContentItem | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
