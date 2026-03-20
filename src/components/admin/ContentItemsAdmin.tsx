@@ -107,6 +107,21 @@ const ContentItemsAdmin = ({ categories }: ContentItemsAdminProps) => {
     fetchItems(page);
   };
 
+  const handleSort = (column: string) => {
+    if (sortColumn === column) {
+      setSortAsc(!sortAsc);
+    } else {
+      setSortColumn(column);
+      setSortAsc(true);
+    }
+    setCurrentPage(1);
+  };
+
+  const SortIcon = ({ column }: { column: string }) => {
+    if (sortColumn !== column) return <ArrowUpDown size={12} className="opacity-30" />;
+    return sortAsc ? <ArrowUp size={12} /> : <ArrowDown size={12} />;
+  };
+
   const resetForm = () => {
     setFormData({ category_id: selectedCategoryId, title: "", description: "", content: "", tags: "", sort_order: 0, is_active: true });
     setEditingItem(null);
