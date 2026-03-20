@@ -300,10 +300,16 @@ const ContentItemsAdmin = ({ categories }: ContentItemsAdminProps) => {
           <table className="w-full">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left px-5 py-3 font-display text-xs uppercase tracking-wider text-muted-foreground">Título</th>
+                <th onClick={() => handleSort("title")} className="text-left px-5 py-3 font-display text-xs uppercase tracking-wider text-muted-foreground cursor-pointer hover:text-foreground transition-colors select-none">
+                  <span className="inline-flex items-center gap-1.5">Título <SortIcon column="title" /></span>
+                </th>
                 <th className="text-left px-5 py-3 font-display text-xs uppercase tracking-wider text-muted-foreground hidden md:table-cell">Tags</th>
-                <th className="text-left px-5 py-3 font-display text-xs uppercase tracking-wider text-muted-foreground hidden lg:table-cell">Descrição</th>
-                <th className="text-left px-5 py-3 font-display text-xs uppercase tracking-wider text-muted-foreground">Status</th>
+                <th onClick={() => handleSort("description")} className="text-left px-5 py-3 font-display text-xs uppercase tracking-wider text-muted-foreground hidden lg:table-cell cursor-pointer hover:text-foreground transition-colors select-none">
+                  <span className="inline-flex items-center gap-1.5">Descrição <SortIcon column="description" /></span>
+                </th>
+                <th onClick={() => handleSort("is_active")} className="text-left px-5 py-3 font-display text-xs uppercase tracking-wider text-muted-foreground cursor-pointer hover:text-foreground transition-colors select-none">
+                  <span className="inline-flex items-center gap-1.5">Status <SortIcon column="is_active" /></span>
+                </th>
                 <th className="text-right px-5 py-3 font-display text-xs uppercase tracking-wider text-muted-foreground">Ações</th>
               </tr>
             </thead>
