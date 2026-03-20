@@ -49,7 +49,7 @@ const ContentItemsAdmin = ({ categories }: ContentItemsAdminProps) => {
       setCurrentPage(1);
       fetchItems(1);
     }
-  }, [selectedCategoryId, searchQuery, selectedTag]);
+  }, [selectedCategoryId, searchQuery, selectedTag, sortColumn, sortAsc]);
 
   const fetchItems = async (page = currentPage) => {
     const from = (page - 1) * ITEMS_PER_PAGE;
