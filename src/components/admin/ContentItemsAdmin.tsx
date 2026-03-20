@@ -14,8 +14,12 @@ interface ContentItemsAdminProps {
 const inputClass = "w-full bg-secondary border border-border rounded-lg px-4 py-2.5 text-foreground font-body text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors";
 const labelClass = "block font-alt text-xs text-muted-foreground mb-1.5 uppercase tracking-wider";
 
+const ITEMS_PER_PAGE = 10;
+
 const ContentItemsAdmin = ({ categories }: ContentItemsAdminProps) => {
   const [items, setItems] = useState<ContentItem[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const [editingItem, setEditingItem] = useState<ContentItem | null>(null);
   const [showForm, setShowForm] = useState(false);
