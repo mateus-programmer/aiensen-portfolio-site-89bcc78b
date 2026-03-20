@@ -47,27 +47,55 @@ const ContentItemsAdmin = ({ categories }: ContentItemsAdminProps) => {
       setCurrentPage(1);
       fetchItems(1);
     }
-  }, [selectedCategoryId]);
+  }, [selectedCategoryId, searchQuery, selectedTag]);
 
   const fetchItems = async (page = currentPage) => {
     const from = (page - 1) * ITEMS_PER_PAGE;
     const to = from + ITEMS_PER_PAGE - 1;
 
-    const { count } = await supabase
+    // Build base query for count
+    let countQuery = supabase
       .from("content_items")
       .select("*", { count: "exact", head: true })
       .eq("category_id", selectedCategoryId);
 
+    if (searchQuery.trim()) {
+      countQuery = countQuery.ilike("title", `%${searchQuery.trim()}%`);
+    }
+    if (selectedTag) {
+      countQuery = countQuery.contains("tags", [selectedTag]);
+    }
+
+    const { count } = await countQuery;
     setTotalCount(count || 0);
 
-    const { data, error } = await supabase
+    // Build data query
+    let dataQuery = supabase
       .from("content_items")
       .select("*")
       .eq("category_id", selectedCategoryId)
       .order("sort_order", { ascending: true })
       .range(from, to);
+
+    if (searchQuery.trim()) {
+      dataQuery = dataQuery.ilike("title", `%${searchQuery.trim()}%`);
+    }
+    if (selectedTag) {
+      dataQuery = dataQuery.contains("tags", [selectedTag]);
+    }
+
+    const { data, error } = await dataQuery;
     if (error) toast.error("Erro ao carregar conteúdos");
     else setItems(data || []);
+
+    // Fetch all tags for this category (unfiltered)
+    const { data: allItems } = await supabase
+      .from("content_items")
+      .select("tags")
+      .eq("category_id", selectedCategoryId);
+    const tagSet = new Set<string>();
+    (allItems || []).forEach(item => (item.tags || []).forEach(t => tagSet.add(t)));
+    setAllTags(Array.from(tagSet).sort());
   };
 
   const totalPages = Math.max(1, Math.ceil(totalCount / ITEMS_PER_PAGE));
