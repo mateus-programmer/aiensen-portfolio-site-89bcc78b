@@ -346,7 +346,7 @@ const ContentItemsAdmin = ({ categories }: ContentItemsAdminProps) => {
               ))}
               {items.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-5 py-10 text-center text-muted-foreground font-alt text-sm">
+                  <td colSpan={6} className="px-5 py-10 text-center text-muted-foreground font-alt text-sm">
                     Nenhum conteúdo nesta categoria.
                   </td>
                 </tr>
