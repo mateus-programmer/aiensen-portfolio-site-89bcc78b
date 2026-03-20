@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Eye, EyeOff, ChevronLeft, ChevronRight, Search, X } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, EyeOff, ChevronLeft, ChevronRight, Search, X, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import type { Tables, TablesInsert } from "@/integrations/supabase/types";
 
 type Category = Tables<"categories">;
@@ -24,6 +24,8 @@ const ContentItemsAdmin = ({ categories }: ContentItemsAdminProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [allTags, setAllTags] = useState<string[]>([]);
   const [selectedTag, setSelectedTag] = useState<string>("");
+  const [sortColumn, setSortColumn] = useState<string>("sort_order");
+  const [sortAsc, setSortAsc] = useState(true);
   const [editingItem, setEditingItem] = useState<ContentItem | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -47,7 +49,7 @@ const ContentItemsAdmin = ({ categories }: ContentItemsAdminProps) => {
       setCurrentPage(1);
       fetchItems(1);
     }
-  }, [selectedCategoryId, searchQuery, selectedTag]);
+  }, [selectedCategoryId, searchQuery, selectedTag, sortColumn, sortAsc]);
 
   const fetchItems = async (page = currentPage) => {
     const from = (page - 1) * ITEMS_PER_PAGE;
@@ -74,7 +76,7 @@ const ContentItemsAdmin = ({ categories }: ContentItemsAdminProps) => {
       .from("content_items")
       .select("*")
       .eq("category_id", selectedCategoryId)
-      .order("sort_order", { ascending: true })
+      .order(sortColumn, { ascending: sortAsc })
       .range(from, to);
 
     if (searchQuery.trim()) {
@@ -103,6 +105,21 @@ const ContentItemsAdmin = ({ categories }: ContentItemsAdminProps) => {
   const goToPage = (page: number) => {
     setCurrentPage(page);
     fetchItems(page);
+  };
+
+  const handleSort = (column: string) => {
+    if (sortColumn === column) {
+      setSortAsc(!sortAsc);
+    } else {
+      setSortColumn(column);
+      setSortAsc(true);
+    }
+    setCurrentPage(1);
+  };
+
+  const SortIcon = ({ column }: { column: string }) => {
+    if (sortColumn !== column) return <ArrowUpDown size={12} className="opacity-30" />;
+    return sortAsc ? <ArrowUp size={12} /> : <ArrowDown size={12} />;
   };
 
   const resetForm = () => {
@@ -283,10 +300,16 @@ const ContentItemsAdmin = ({ categories }: ContentItemsAdminProps) => {
           <table className="w-full">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left px-5 py-3 font-display text-xs uppercase tracking-wider text-muted-foreground">Título</th>
+                <th onClick={() => handleSort("title")} className="text-left px-5 py-3 font-display text-xs uppercase tracking-wider text-muted-foreground cursor-pointer hover:text-foreground transition-colors select-none">
+                  <span className="inline-flex items-center gap-1.5">Título <SortIcon column="title" /></span>
+                </th>
                 <th className="text-left px-5 py-3 font-display text-xs uppercase tracking-wider text-muted-foreground hidden md:table-cell">Tags</th>
-                <th className="text-left px-5 py-3 font-display text-xs uppercase tracking-wider text-muted-foreground hidden lg:table-cell">Descrição</th>
-                <th className="text-left px-5 py-3 font-display text-xs uppercase tracking-wider text-muted-foreground">Status</th>
+                <th onClick={() => handleSort("description")} className="text-left px-5 py-3 font-display text-xs uppercase tracking-wider text-muted-foreground hidden lg:table-cell cursor-pointer hover:text-foreground transition-colors select-none">
+                  <span className="inline-flex items-center gap-1.5">Descrição <SortIcon column="description" /></span>
+                </th>
+                <th onClick={() => handleSort("is_active")} className="text-left px-5 py-3 font-display text-xs uppercase tracking-wider text-muted-foreground cursor-pointer hover:text-foreground transition-colors select-none">
+                  <span className="inline-flex items-center gap-1.5">Status <SortIcon column="is_active" /></span>
+                </th>
                 <th className="text-right px-5 py-3 font-display text-xs uppercase tracking-wider text-muted-foreground">Ações</th>
               </tr>
             </thead>
