@@ -186,6 +186,44 @@ const ContentItemsAdmin = ({ categories }: ContentItemsAdminProps) => {
         </button>
       </div>
 
+      {/* Search & Tag Filter */}
+      <div className="flex items-center gap-3 mb-6 flex-wrap">
+        <div className="relative flex-1 min-w-[200px] max-w-sm">
+          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Buscar por título..."
+            className="w-full bg-secondary border border-border rounded-lg pl-9 pr-8 py-2 text-foreground font-body text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+          />
+          {searchQuery && (
+            <button onClick={() => setSearchQuery("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
+              <X size={14} />
+            </button>
+          )}
+        </div>
+        {allTags.length > 0 && (
+          <select
+            value={selectedTag}
+            onChange={(e) => setSelectedTag(e.target.value)}
+            className="bg-secondary border border-border rounded-lg px-3 py-2 text-foreground font-body text-sm focus:outline-none focus:border-primary transition-colors"
+          >
+            <option value="">Todas as tags</option>
+            {allTags.map((tag) => (
+              <option key={tag} value={tag}>{tag}</option>
+            ))}
+          </select>
+        )}
+        {(searchQuery || selectedTag) && (
+          <button
+            onClick={() => { setSearchQuery(""); setSelectedTag(""); }}
+            className="text-xs text-muted-foreground hover:text-foreground font-display uppercase tracking-wider transition-colors"
+          >
+            Limpar filtros
+          </button>
+        )}
+      </div>
+
       {/* Form */}
       {showForm && (
         <form onSubmit={handleSave} className="bg-card border border-border rounded-xl p-6 mb-8 space-y-4">
