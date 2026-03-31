@@ -27,6 +27,7 @@ const fallbackImages: Record<string, string> = {
   "Prompts sobre Aborto": cardAborto,
   "Prompts: Legalização das Drogas": cardDrogas,
   "Prompts para Histórias Infantis": cardHistorias,
+  "Aulas Engenharia de Software": cardEngenharia,
 };
 
 const staticCategories = [
