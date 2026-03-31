@@ -1,5 +1,6 @@
-import { motion } from "framer-motion";
-import { FileText, Download, Trash2, ExternalLink } from "lucide-react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { FileText, Download, Trash2, ExternalLink, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -20,11 +21,12 @@ const accentBorder: Record<string, string> = {
 };
 
 const PdfFileItem = ({ id, title, fileUrl, neonColor, index, isAdmin, onDeleted }: PdfFileItemProps) => {
+  const [showViewer, setShowViewer] = useState(false);
+
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!confirm(`Excluir "${title}"?`)) return;
 
-    // Extract storage path from URL
     const urlParts = fileUrl.split("/category-files/");
     const storagePath = urlParts[1] ? decodeURIComponent(urlParts[1]) : null;
 
@@ -47,9 +49,9 @@ const PdfFileItem = ({ id, title, fileUrl, neonColor, index, isAdmin, onDeleted 
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.4, delay: index * 0.05 }}
-      className={`bg-card border border-border rounded-xl p-5 border-l-4 ${accentBorder[neonColor] || accentBorder.yellow} hover:bg-secondary/30 transition-colors`}
+      className={`bg-card border border-border rounded-xl overflow-hidden border-l-4 ${accentBorder[neonColor] || accentBorder.yellow} hover:bg-secondary/30 transition-colors`}
     >
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 p-5">
         <div className="p-2 rounded-lg bg-destructive/10 text-destructive">
           <FileText size={22} />
         </div>
@@ -60,6 +62,13 @@ const PdfFileItem = ({ id, title, fileUrl, neonColor, index, isAdmin, onDeleted 
           <p className="text-xs text-muted-foreground mt-0.5">PDF</p>
         </div>
         <div className="flex items-center gap-1">
+          <button
+            onClick={() => setShowViewer(!showViewer)}
+            className={`p-2 transition-colors rounded-lg hover:bg-secondary ${showViewer ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
+            title={showViewer ? "Fechar visualizador" : "Visualizar"}
+          >
+            {showViewer ? <EyeOff size={16} /> : <Eye size={16} />}
+          </button>
           <a
             href={fileUrl}
             target="_blank"
@@ -88,6 +97,24 @@ const PdfFileItem = ({ id, title, fileUrl, neonColor, index, isAdmin, onDeleted 
           )}
         </div>
       </div>
+
+      <AnimatePresence>
+        {showViewer && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "70vh", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="border-t border-border"
+          >
+            <iframe
+              src={`${fileUrl}#toolbar=1&navpanes=1`}
+              className="w-full h-full"
+              title={title}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };
