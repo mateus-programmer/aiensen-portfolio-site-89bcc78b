@@ -4,7 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import { ArrowLeft, FileText, Lock } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useQueryClient } from "@tanstack/react-query";
 import type { Tables } from "@/integrations/supabase/types";
+import PdfUpload from "@/components/PdfUpload";
+import PdfFileItem from "@/components/PdfFileItem";
 
 type Category = Tables<"categories">;
 type ContentItem = Tables<"content_items">;
