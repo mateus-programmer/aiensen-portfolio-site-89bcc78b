@@ -127,8 +127,25 @@ const CategoryPage = () => {
           )}
         </motion.div>
 
-        {/* Content items */}
-        {items && items.length > 0 ? (
+        {/* Content items - requires login */}
+        {!user && !authLoading ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center py-20"
+          >
+            <Lock size={40} className="mx-auto text-muted-foreground/30 mb-4" />
+            <p className="font-alt text-muted-foreground text-sm mb-4">
+              Faça login para acessar os prompts desta categoria.
+            </p>
+            <button
+              onClick={() => navigate("/auth")}
+              className="px-6 py-2.5 rounded-lg bg-primary text-primary-foreground font-display text-sm font-semibold hover:opacity-90 transition-opacity"
+            >
+              Entrar na conta
+            </button>
+          </motion.div>
+        ) : items && items.length > 0 ? (
           <div className="grid gap-4">
             {items.map((item, i) => (
               <motion.div
