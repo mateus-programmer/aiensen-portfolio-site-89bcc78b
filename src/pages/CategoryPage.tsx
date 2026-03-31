@@ -4,7 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import { ArrowLeft, FileText, Lock } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useQueryClient } from "@tanstack/react-query";
 import type { Tables } from "@/integrations/supabase/types";
+import PdfUpload from "@/components/PdfUpload";
+import PdfFileItem from "@/components/PdfFileItem";
 
 type Category = Tables<"categories">;
 type ContentItem = Tables<"content_items">;
@@ -30,7 +33,8 @@ const accentBorder: Record<string, string> = {
 const CategoryPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user, loading: authLoading } = useAuth();
+  const { user, isAdmin, loading: authLoading } = useAuth();
+  const queryClient = useQueryClient();
 
   const { data: category, isLoading: loadingCategory } = useQuery({
     queryKey: ["category", id],
@@ -136,7 +140,7 @@ const CategoryPage = () => {
           >
             <Lock size={40} className="mx-auto text-muted-foreground/30 mb-4" />
             <p className="font-alt text-muted-foreground text-sm mb-4">
-              Faça login para acessar os prompts desta categoria.
+              Faça login para acessar os conteúdos desta categoria.
             </p>
             <button
               onClick={() => navigate("/auth")}
@@ -145,60 +149,91 @@ const CategoryPage = () => {
               Entrar na conta
             </button>
           </motion.div>
-        ) : items && items.length > 0 ? (
-          <div className="grid gap-4">
-            {items.map((item, i) => (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.4, delay: i * 0.05 }}
-                className={`bg-card border border-border rounded-xl p-5 border-l-4 ${accentBorder[color]} hover:bg-secondary/30 transition-colors`}
-              >
-                <div className="flex items-start gap-4">
-                  <div className="mt-0.5 text-muted-foreground">
-                    <FileText size={18} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-display text-sm font-semibold text-foreground mb-1">
-                      {item.title}
-                    </h3>
-                    {item.description && (
-                      <p className="font-body text-xs text-muted-foreground leading-relaxed mb-2">
-                        {item.description}
-                      </p>
-                    )}
-                    {item.content && (
-                      <div className="bg-secondary/50 rounded-lg p-4 mt-3">
-                        <pre className="font-body text-xs text-foreground/80 whitespace-pre-wrap break-words">
-                          {item.content}
-                        </pre>
-                      </div>
-                    )}
-                    {item.tags && item.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 mt-3">
-                        {item.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="text-[10px] font-display tracking-wider uppercase px-2 py-0.5 rounded bg-secondary text-muted-foreground"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
         ) : (
-          <div className="text-center py-20">
-            <FileText size={40} className="mx-auto text-muted-foreground/30 mb-4" />
-            <p className="font-alt text-muted-foreground text-sm">
-              Nenhum conteúdo disponível nesta categoria ainda.
-            </p>
-          </div>
+          <>
+            {/* Admin upload */}
+            {isAdmin && id && (
+              <PdfUpload
+                categoryId={id}
+                onUploadComplete={() => queryClient.invalidateQueries({ queryKey: ["content_items", id] })}
+              />
+            )}
+
+            {items && items.length > 0 ? (
+              <div className="grid gap-4">
+                {items.map((item, i) => {
+                  // If item has a file_url, render as PDF file
+                  if ((item as any).file_url) {
+                    return (
+                      <PdfFileItem
+                        key={item.id}
+                        id={item.id}
+                        title={item.title}
+                        fileUrl={(item as any).file_url}
+                        neonColor={color}
+                        index={i}
+                        isAdmin={isAdmin}
+                        onDeleted={() => queryClient.invalidateQueries({ queryKey: ["content_items", id] })}
+                      />
+                    );
+                  }
+
+                  // Regular text content item
+                  return (
+                    <motion.div
+                      key={item.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.4, delay: i * 0.05 }}
+                      className={`bg-card border border-border rounded-xl p-5 border-l-4 ${accentBorder[color]} hover:bg-secondary/30 transition-colors`}
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className="mt-0.5 text-muted-foreground">
+                          <FileText size={18} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-display text-sm font-semibold text-foreground mb-1">
+                            {item.title}
+                          </h3>
+                          {item.description && (
+                            <p className="font-body text-xs text-muted-foreground leading-relaxed mb-2">
+                              {item.description}
+                            </p>
+                          )}
+                          {item.content && (
+                            <div className="bg-secondary/50 rounded-lg p-4 mt-3">
+                              <pre className="font-body text-xs text-foreground/80 whitespace-pre-wrap break-words">
+                                {item.content}
+                              </pre>
+                            </div>
+                          )}
+                          {item.tags && item.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5 mt-3">
+                              {item.tags.map((tag) => (
+                                <span
+                                  key={tag}
+                                  className="text-[10px] font-display tracking-wider uppercase px-2 py-0.5 rounded bg-secondary text-muted-foreground"
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-20">
+                <FileText size={40} className="mx-auto text-muted-foreground/30 mb-4" />
+                <p className="font-alt text-muted-foreground text-sm">
+                  Nenhum conteúdo disponível nesta categoria ainda.
+                </p>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
