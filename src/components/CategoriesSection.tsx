@@ -39,6 +39,7 @@ const staticCategories = [
   { title: "Prompts: Ideologia de Gênero", description: "Prompts para análise crítica sobre ideologia de gênero — perspectivas bíblicas, científicas e filosóficas.", image: cardIdeologiaGenero, tags: ["Ideologia de Gênero", "Análise"], neonColor: "purple" as const },
   { title: "Prompts sobre Aborto", description: "Prompts para debates estruturados sobre aborto — argumentos éticos, científicos, jurídicos e teológicos.", image: cardAborto, tags: ["Aborto", "Ética", "Bioética"], neonColor: "purple" as const },
   { title: "Prompts: Legalização das Drogas", description: "Prompts para análise crítica sobre legalização das drogas — impactos sociais, econômicos e de saúde pública.", image: cardDrogas, tags: ["Drogas", "Política Pública", "Sociedade"], neonColor: "cyan" as const },
+  { title: "Prompts para Histórias Infantis", description: "Prompts criativos para geração de histórias infantis e juvenis — contos de fadas, aventuras, fábulas e narrativas educativas.", image: cardHistorias, tags: ["Infantil", "Juvenil", "Histórias"], neonColor: "cyan" as const },
 ];
 
 const CategoriesSection = () => {
