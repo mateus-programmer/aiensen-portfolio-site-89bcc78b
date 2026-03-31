@@ -2,7 +2,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
-import { ArrowLeft, FileText } from "lucide-react";
+import { ArrowLeft, FileText, Lock } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Category = Tables<"categories">;
@@ -29,6 +30,7 @@ const accentBorder: Record<string, string> = {
 const CategoryPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
 
   const { data: category, isLoading: loadingCategory } = useQuery({
     queryKey: ["category", id],
@@ -45,7 +47,7 @@ const CategoryPage = () => {
   });
 
   const { data: items, isLoading: loadingItems } = useQuery({
-    queryKey: ["content_items", id],
+    queryKey: ["content_items", id, user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("content_items")
@@ -56,10 +58,10 @@ const CategoryPage = () => {
       if (error) throw error;
       return data as ContentItem[];
     },
-    enabled: !!id,
+    enabled: !!id && !!user,
   });
 
-  const isLoading = loadingCategory || loadingItems;
+  const isLoading = loadingCategory || loadingItems || authLoading;
   const color = category?.neon_color || "yellow";
 
   if (isLoading) {
@@ -125,8 +127,25 @@ const CategoryPage = () => {
           )}
         </motion.div>
 
-        {/* Content items */}
-        {items && items.length > 0 ? (
+        {/* Content items - requires login */}
+        {!user && !authLoading ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center py-20"
+          >
+            <Lock size={40} className="mx-auto text-muted-foreground/30 mb-4" />
+            <p className="font-alt text-muted-foreground text-sm mb-4">
+              Faça login para acessar os prompts desta categoria.
+            </p>
+            <button
+              onClick={() => navigate("/auth")}
+              className="px-6 py-2.5 rounded-lg bg-primary text-primary-foreground font-display text-sm font-semibold hover:opacity-90 transition-opacity"
+            >
+              Entrar na conta
+            </button>
+          </motion.div>
+        ) : items && items.length > 0 ? (
           <div className="grid gap-4">
             {items.map((item, i) => (
               <motion.div
