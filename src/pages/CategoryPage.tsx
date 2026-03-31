@@ -30,6 +30,7 @@ const accentBorder: Record<string, string> = {
 const CategoryPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
 
   const { data: category, isLoading: loadingCategory } = useQuery({
     queryKey: ["category", id],
