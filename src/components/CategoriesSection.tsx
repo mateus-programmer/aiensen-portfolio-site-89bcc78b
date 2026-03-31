@@ -12,6 +12,7 @@ import cardCapCom from "@/assets/card-capitalismo-comunismo.jpg";
 import cardIdeologiaGenero from "@/assets/card-ideologia-genero.jpg";
 import cardAborto from "@/assets/card-aborto.jpg";
 import cardDrogas from "@/assets/card-legalizacao-drogas.jpg";
+import cardHistorias from "@/assets/card-historias-infantis.jpg";
 
 const fallbackImages: Record<string, string> = {
   "Prompts para Imagens": cardPromptsImagens,
@@ -24,6 +25,7 @@ const fallbackImages: Record<string, string> = {
   "Prompts: Ideologia de Gênero": cardIdeologiaGenero,
   "Prompts sobre Aborto": cardAborto,
   "Prompts: Legalização das Drogas": cardDrogas,
+  "Prompts para Histórias Infantis": cardHistorias,
 };
 
 const staticCategories = [
