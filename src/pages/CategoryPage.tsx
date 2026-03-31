@@ -47,7 +47,7 @@ const CategoryPage = () => {
   });
 
   const { data: items, isLoading: loadingItems } = useQuery({
-    queryKey: ["content_items", id],
+    queryKey: ["content_items", id, user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("content_items")
@@ -58,10 +58,10 @@ const CategoryPage = () => {
       if (error) throw error;
       return data as ContentItem[];
     },
-    enabled: !!id,
+    enabled: !!id && !!user,
   });
 
-  const isLoading = loadingCategory || loadingItems;
+  const isLoading = loadingCategory || loadingItems || authLoading;
   const color = category?.neon_color || "yellow";
 
   if (isLoading) {
