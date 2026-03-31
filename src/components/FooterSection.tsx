@@ -14,10 +14,10 @@ const FooterSection = () => {
 
         <div className="flex justify-center gap-6 mb-10">
           {[
-            { icon: Mail, href: "mailto:contato@aiensen.com", label: "Email" },
-            { icon: Instagram, href: "#", label: "Instagram" },
-            { icon: Github, href: "#", label: "GitHub" },
-            { icon: Linkedin, href: "#", label: "LinkedIn" },
+            { icon: Mail, href: "mailto:mateusleitesilva@yahoo.com", label: "Email" },
+            { icon: Instagram, href: "https://instagram.com/iensenmateus", label: "Instagram" },
+            { icon: Github, href: "https://github.com/mateus-programmer", label: "GitHub" },
+            { icon: Linkedin, href: "https://www.linkedin.com/in/mateusiensen/", label: "LinkedIn" },
           ].map((s) => (
             <a
               key={s.label}
