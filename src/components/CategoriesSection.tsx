@@ -13,6 +13,7 @@ import cardIdeologiaGenero from "@/assets/card-ideologia-genero.jpg";
 import cardAborto from "@/assets/card-aborto.jpg";
 import cardDrogas from "@/assets/card-legalizacao-drogas.jpg";
 import cardHistorias from "@/assets/card-historias-infantis.jpg";
+import cardEngenharia from "@/assets/card-aulas-engenharia.jpg";
 
 const fallbackImages: Record<string, string> = {
   "Prompts para Imagens": cardPromptsImagens,
