@@ -59,6 +59,7 @@ export type Database = {
           content: string | null
           created_at: string
           description: string | null
+          file_url: string | null
           id: string
           is_active: boolean
           sort_order: number
@@ -71,6 +72,7 @@ export type Database = {
           content?: string | null
           created_at?: string
           description?: string | null
+          file_url?: string | null
           id?: string
           is_active?: boolean
           sort_order?: number
@@ -83,6 +85,7 @@ export type Database = {
           content?: string | null
           created_at?: string
           description?: string | null
+          file_url?: string | null
           id?: string
           is_active?: boolean
           sort_order?: number
