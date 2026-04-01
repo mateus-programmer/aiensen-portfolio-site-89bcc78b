@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -46,6 +47,8 @@ const staticCategories = [
 ];
 
 const CategoriesSection = () => {
+  const [search, setSearch] = useState("");
+
   const { data: dbCategories } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
@@ -69,6 +72,16 @@ const CategoriesSection = () => {
       }))
     : staticCategories;
 
+  const query = search.toLowerCase().trim();
+  const filtered = query
+    ? categories.filter(
+        (cat) =>
+          cat.title.toLowerCase().includes(query) ||
+          cat.description.toLowerCase().includes(query) ||
+          cat.tags.some((t) => t.toLowerCase().includes(query))
+      )
+    : categories;
+
   return (
     <section id="categorias" className="py-24 px-6">
       <div className="max-w-6xl mx-auto">
@@ -83,16 +96,41 @@ const CategoriesSection = () => {
             <span className="neon-text-cyan">Módulos</span>{" "}
             <span className="text-foreground">de Conteúdo</span>
           </h2>
-          <p className="font-alt text-muted-foreground max-w-xl mx-auto">
+          <p className="font-alt text-muted-foreground max-w-xl mx-auto mb-8">
             Explore cada categoria e acesse uma biblioteca completa de prompts, cursos e materiais temáticos.
           </p>
+
+          {/* Search */}
+          <div className="relative max-w-md mx-auto">
+            <svg
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+              width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.3-4.3" />
+            </svg>
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Buscar categorias, tags..."
+              className="w-full bg-secondary border border-border rounded-lg pl-11 pr-4 py-2.5 text-foreground font-body text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+            />
+          </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {categories.map((cat, i) => (
-            <CategoryCard key={cat.title} {...cat} index={i} />
-          ))}
-        </div>
+        {filtered.length === 0 ? (
+          <p className="text-center text-muted-foreground font-alt text-sm py-12">
+            Nenhuma categoria encontrada para "{search}".
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filtered.map((cat, i) => (
+              <CategoryCard key={cat.title} {...cat} index={i} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
