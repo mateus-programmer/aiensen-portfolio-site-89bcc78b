@@ -32,6 +32,7 @@ const accentBorder: Record<string, string> = {
 };
 
 const CategoryPage = () => {
+  const [search, setSearch] = useState("");
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user, isAdmin, loading: authLoading } = useAuth();
