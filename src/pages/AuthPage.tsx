@@ -11,6 +11,8 @@ const AuthPage = () => {
   const [loading, setLoading] = useState(false);
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
+  const searchParams = new URLSearchParams(window.location.search);
+  const redirectTo = searchParams.get("redirect") || "/";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,7 +24,7 @@ const AuthPage = () => {
         toast.error(error.message);
       } else {
         toast.success("Login realizado com sucesso!");
-        navigate("/");
+        navigate(redirectTo);
       }
     } else {
       const { error } = await signUp(email, password, displayName);
