@@ -24,7 +24,7 @@ const AuthPage = () => {
         toast.error(error.message);
       } else {
         toast.success("Login realizado com sucesso!");
-        navigate("/");
+        navigate(redirectTo);
       }
     } else {
       const { error } = await signUp(email, password, displayName);

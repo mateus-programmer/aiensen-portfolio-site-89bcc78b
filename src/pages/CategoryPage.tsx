@@ -143,7 +143,7 @@ const CategoryPage = () => {
               Faça login para acessar os conteúdos desta categoria.
             </p>
             <button
-              onClick={() => navigate("/auth")}
+              onClick={() => navigate(`/auth?redirect=${encodeURIComponent(`/categoria/${id}`)}`)}
               className="px-6 py-2.5 rounded-lg bg-primary text-primary-foreground font-display text-sm font-semibold hover:opacity-90 transition-opacity"
             >
               Entrar na conta
