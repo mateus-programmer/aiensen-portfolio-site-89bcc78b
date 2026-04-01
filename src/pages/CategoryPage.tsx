@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -31,6 +32,7 @@ const accentBorder: Record<string, string> = {
 };
 
 const CategoryPage = () => {
+  const [search, setSearch] = useState("");
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user, isAdmin, loading: authLoading } = useAuth();
@@ -159,80 +161,124 @@ const CategoryPage = () => {
               />
             )}
 
-            {items && items.length > 0 ? (
-              <div className="grid gap-4">
-                {items.map((item, i) => {
-                  // If item has a file_url, render as PDF file
-                  if ((item as any).file_url) {
-                    return (
-                      <PdfFileItem
-                        key={item.id}
-                        id={item.id}
-                        title={item.title}
-                        fileUrl={(item as any).file_url}
-                        neonColor={color}
-                        index={i}
-                        isAdmin={isAdmin}
-                        onDeleted={() => queryClient.invalidateQueries({ queryKey: ["content_items", id] })}
-                      />
-                    );
-                  }
-
-                  // Regular text content item
-                  return (
-                    <motion.div
-                      key={item.id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.4, delay: i * 0.05 }}
-                      className={`bg-card border border-border rounded-xl p-5 border-l-4 ${accentBorder[color]} hover:bg-secondary/30 transition-colors`}
-                    >
-                      <div className="flex items-start gap-4">
-                        <div className="mt-0.5 text-muted-foreground">
-                          <FileText size={18} />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-display text-sm font-semibold text-foreground mb-1">
-                            {item.title}
-                          </h3>
-                          {item.description && (
-                            <p className="font-body text-xs text-muted-foreground leading-relaxed mb-2">
-                              {item.description}
-                            </p>
-                          )}
-                          {item.content && (
-                            <div className="bg-secondary/50 rounded-lg p-4 mt-3">
-                              <pre className="font-body text-xs text-foreground/80 whitespace-pre-wrap break-words">
-                                {item.content}
-                              </pre>
-                            </div>
-                          )}
-                          {item.tags && item.tags.length > 0 && (
-                            <div className="flex flex-wrap gap-1.5 mt-3">
-                              {item.tags.map((tag) => (
-                                <span
-                                  key={tag}
-                                  className="text-[10px] font-display tracking-wider uppercase px-2 py-0.5 rounded bg-secondary text-muted-foreground"
-                                >
-                                  {tag}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="text-center py-20">
-                <FileText size={40} className="mx-auto text-muted-foreground/30 mb-4" />
-                <p className="font-alt text-muted-foreground text-sm">
-                  Nenhum conteúdo disponível nesta categoria ainda.
-                </p>
+            {/* Search bar */}
+            {items && items.length > 0 && (
+              <div className="relative max-w-md mb-6">
+                <svg
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.3-4.3" />
+                </svg>
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Buscar conteúdos, tags..."
+                  className="w-full bg-secondary border border-border rounded-lg pl-11 pr-4 py-2.5 text-foreground font-body text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                />
               </div>
             )}
+
+            {(() => {
+              const query = search.toLowerCase().trim();
+              const filtered = items && query
+                ? items.filter(
+                    (item) =>
+                      item.title.toLowerCase().includes(query) ||
+                      (item.description || "").toLowerCase().includes(query) ||
+                      (item.content || "").toLowerCase().includes(query) ||
+                      (item.tags || []).some((t) => t.toLowerCase().includes(query))
+                  )
+                : items;
+
+              if (filtered && filtered.length > 0) {
+                return (
+                  <div className="grid gap-4">
+                    {filtered.map((item, i) => {
+                      if ((item as any).file_url) {
+                        return (
+                          <PdfFileItem
+                            key={item.id}
+                            id={item.id}
+                            title={item.title}
+                            fileUrl={(item as any).file_url}
+                            neonColor={color}
+                            index={i}
+                            isAdmin={isAdmin}
+                            onDeleted={() => queryClient.invalidateQueries({ queryKey: ["content_items", id] })}
+                          />
+                        );
+                      }
+
+                      return (
+                        <motion.div
+                          key={item.id}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.4, delay: i * 0.05 }}
+                          className={`bg-card border border-border rounded-xl p-5 border-l-4 ${accentBorder[color]} hover:bg-secondary/30 transition-colors`}
+                        >
+                          <div className="flex items-start gap-4">
+                            <div className="mt-0.5 text-muted-foreground">
+                              <FileText size={18} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-display text-sm font-semibold text-foreground mb-1">
+                                {item.title}
+                              </h3>
+                              {item.description && (
+                                <p className="font-body text-xs text-muted-foreground leading-relaxed mb-2">
+                                  {item.description}
+                                </p>
+                              )}
+                              {item.content && (
+                                <div className="bg-secondary/50 rounded-lg p-4 mt-3">
+                                  <pre className="font-body text-xs text-foreground/80 whitespace-pre-wrap break-words">
+                                    {item.content}
+                                  </pre>
+                                </div>
+                              )}
+                              {item.tags && item.tags.length > 0 && (
+                                <div className="flex flex-wrap gap-1.5 mt-3">
+                                  {item.tags.map((tag) => (
+                                    <span
+                                      key={tag}
+                                      className="text-[10px] font-display tracking-wider uppercase px-2 py-0.5 rounded bg-secondary text-muted-foreground"
+                                    >
+                                      {tag}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                );
+              }
+
+              if (items && items.length > 0 && query) {
+                return (
+                  <p className="text-center text-muted-foreground font-alt text-sm py-12">
+                    Nenhum conteúdo encontrado para "{search}".
+                  </p>
+                );
+              }
+
+              return (
+                <div className="text-center py-20">
+                  <FileText size={40} className="mx-auto text-muted-foreground/30 mb-4" />
+                  <p className="font-alt text-muted-foreground text-sm">
+                    Nenhum conteúdo disponível nesta categoria ainda.
+                  </p>
+                </div>
+              );
+            })()}
           </>
         )}
       </div>
