@@ -5,10 +5,11 @@ import { toast } from "sonner";
 
 interface PdfUploadProps {
   categoryId: string;
+  defaultTags?: string[];
   onUploadComplete: () => void;
 }
 
-const PdfUpload = ({ categoryId, onUploadComplete }: PdfUploadProps) => {
+const PdfUpload = ({ categoryId, defaultTags, onUploadComplete }: PdfUploadProps) => {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
