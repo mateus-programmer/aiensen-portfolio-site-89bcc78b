@@ -148,10 +148,10 @@ const ProgrammingLanguageCards = ({ categoryId, searchQuery = "" }: Props) => {
                 className="font-display text-sm font-bold tracking-wide mb-1 transition-all duration-300"
                 style={{ color: `hsl(${lang.accentHsl})` }}
               >
-                {lang.name}
+                <HighlightMatch text={lang.name} query={query} />
               </h3>
               <p className="font-body text-xs text-muted-foreground leading-relaxed">
-                {lang.description}
+                <HighlightMatch text={lang.description} query={query} />
               </p>
             </div>
 
