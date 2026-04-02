@@ -78,14 +78,32 @@ const languages: LanguageInfo[] = [
 
 interface Props {
   categoryId: string;
+  searchQuery?: string;
 }
 
-const ProgrammingLanguageCards = ({ categoryId }: Props) => {
+const ProgrammingLanguageCards = ({ categoryId, searchQuery = "" }: Props) => {
   const navigate = useNavigate();
+  const query = searchQuery.toLowerCase().trim();
+  const filteredLanguages = query
+    ? languages.filter(
+        (lang) =>
+          lang.name.toLowerCase().includes(query) ||
+          lang.slug.toLowerCase().includes(query) ||
+          lang.description.toLowerCase().includes(query)
+      )
+    : languages;
+
+  if (filteredLanguages.length === 0) {
+    return (
+      <div className="rounded-xl border border-border bg-card/60 px-5 py-6 text-sm text-muted-foreground backdrop-blur-sm">
+        Nenhuma linguagem encontrada para "{searchQuery}".
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-      {languages.map((lang, i) => (
+      {filteredLanguages.map((lang, i) => (
         <motion.div
           key={lang.slug}
           initial={{ opacity: 0, y: 24 }}
