@@ -1,13 +1,11 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Code2 } from "lucide-react";
+import { Terminal } from "lucide-react";
 
 interface LanguageInfo {
   name: string;
   slug: string;
-  color: string;
-  bgColor: string;
-  borderColor: string;
+  accentHsl: string;
   icon: string;
   description: string;
 }
@@ -16,81 +14,63 @@ const languages: LanguageInfo[] = [
   {
     name: "HTML",
     slug: "html",
-    color: "text-orange-400",
-    bgColor: "bg-orange-500/10",
-    borderColor: "border-orange-500/30",
+    accentHsl: "15 90% 55%",
     icon: "🌐",
     description: "Estrutura e marcação web",
   },
   {
     name: "CSS",
     slug: "css",
-    color: "text-blue-400",
-    bgColor: "bg-blue-500/10",
-    borderColor: "border-blue-500/30",
+    accentHsl: "210 90% 55%",
     icon: "🎨",
     description: "Estilização e layout",
   },
   {
     name: "Python",
     slug: "python",
-    color: "text-yellow-400",
-    bgColor: "bg-yellow-500/10",
-    borderColor: "border-yellow-500/30",
+    accentHsl: "48 100% 50%",
     icon: "🐍",
     description: "Ciência de dados e automação",
   },
   {
     name: "JavaScript",
     slug: "javascript",
-    color: "text-yellow-300",
-    bgColor: "bg-yellow-400/10",
-    borderColor: "border-yellow-400/30",
+    accentHsl: "50 95% 55%",
     icon: "⚡",
     description: "Web interativa e full-stack",
   },
   {
     name: "Java",
     slug: "java",
-    color: "text-red-400",
-    bgColor: "bg-red-500/10",
-    borderColor: "border-red-500/30",
+    accentHsl: "0 75% 55%",
     icon: "☕",
     description: "Aplicações enterprise",
   },
   {
     name: "Lisp",
     slug: "lisp",
-    color: "text-green-400",
-    bgColor: "bg-green-500/10",
-    borderColor: "border-green-500/30",
+    accentHsl: "140 70% 50%",
     icon: "🧠",
     description: "Programação funcional e IA clássica",
   },
   {
     name: "R",
     slug: "r",
-    color: "text-sky-400",
-    bgColor: "bg-sky-500/10",
-    borderColor: "border-sky-500/30",
+    accentHsl: "200 85% 55%",
     icon: "📊",
     description: "Estatística e análise de dados",
   },
   {
     name: "Julia",
     slug: "julia",
-    color: "text-purple-400",
-    bgColor: "bg-purple-500/10",
-    borderColor: "border-purple-500/30",
+    accentHsl: "270 80% 60%",
     icon: "🔬",
     description: "Computação científica de alto desempenho",
   },
   {
     name: "Scala",
     slug: "scala",
-    color: "text-rose-400",
-    bgColor: "bg-rose-500/10",
-    borderColor: "border-rose-500/30",
+    accentHsl: "350 80% 58%",
     icon: "🔥",
     description: "Funcional + orientado a objetos na JVM",
   },
@@ -104,29 +84,76 @@ const ProgrammingLanguageCards = ({ categoryId }: Props) => {
   const navigate = useNavigate();
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
       {languages.map((lang, i) => (
         <motion.div
           key={lang.slug}
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: i * 0.06 }}
+          transition={{ duration: 0.45, delay: i * 0.06, ease: [0.2, 0, 0, 1] }}
           onClick={() => navigate(`/categoria/${categoryId}/linguagem/${lang.slug}`)}
-          className={`group relative rounded-xl border ${lang.borderColor} ${lang.bgColor} p-5 cursor-pointer
-            hover:scale-[1.03] hover:shadow-lg transition-all duration-300 backdrop-blur-sm`}
+          className="group relative rounded-xl overflow-hidden cursor-pointer"
+          style={{
+            background: `linear-gradient(145deg, hsl(${lang.accentHsl} / 0.08) 0%, hsl(var(--card)) 60%)`,
+            border: `1px solid hsl(${lang.accentHsl} / 0.2)`,
+          }}
         >
-          <div className="flex items-start gap-4">
-            <div className="text-3xl flex-shrink-0">{lang.icon}</div>
+          {/* Top accent glow line */}
+          <div
+            className="absolute top-0 left-0 right-0 h-px opacity-60 group-hover:opacity-100 transition-opacity duration-500"
+            style={{ background: `linear-gradient(90deg, transparent, hsl(${lang.accentHsl}), transparent)` }}
+          />
+
+          {/* Corner glow */}
+          <div
+            className="absolute -top-12 -right-12 w-24 h-24 rounded-full blur-2xl opacity-0 group-hover:opacity-30 transition-opacity duration-500"
+            style={{ background: `hsl(${lang.accentHsl})` }}
+          />
+
+          <div className="relative p-5 flex items-start gap-4">
+            {/* Icon with glow ring */}
+            <div
+              className="relative flex items-center justify-center w-12 h-12 rounded-lg text-2xl flex-shrink-0 transition-all duration-300 group-hover:scale-110"
+              style={{
+                background: `hsl(${lang.accentHsl} / 0.12)`,
+                border: `1px solid hsl(${lang.accentHsl} / 0.25)`,
+                boxShadow: `0 0 0px hsl(${lang.accentHsl} / 0)`,
+              }}
+              onMouseEnter={() => {}}
+            >
+              <span className="relative z-10">{lang.icon}</span>
+            </div>
+
             <div className="flex-1 min-w-0">
-              <h3 className={`font-display text-base font-bold ${lang.color} mb-1`}>
+              <h3
+                className="font-display text-sm font-bold tracking-wide mb-1 transition-all duration-300"
+                style={{ color: `hsl(${lang.accentHsl})` }}
+              >
                 {lang.name}
               </h3>
               <p className="font-body text-xs text-muted-foreground leading-relaxed">
                 {lang.description}
               </p>
             </div>
-            <Code2 size={16} className="text-muted-foreground/40 mt-1 flex-shrink-0 group-hover:text-muted-foreground transition-colors" />
+
+            <Terminal
+              size={14}
+              className="text-muted-foreground/30 mt-1 flex-shrink-0 group-hover:text-muted-foreground/60 transition-colors duration-300"
+            />
           </div>
+
+          {/* Bottom accent bar on hover */}
+          <div
+            className="h-0.5 w-0 group-hover:w-full transition-all duration-500 ease-out"
+            style={{ background: `linear-gradient(90deg, hsl(${lang.accentHsl}), hsl(${lang.accentHsl} / 0.3))` }}
+          />
+
+          {/* Hover glow border effect */}
+          <style>{`
+            .group:hover {
+              box-shadow: 0 0 20px hsl(${lang.accentHsl} / 0.15), 0 8px 32px hsl(0 0% 0% / 0.4);
+            }
+          `}</style>
         </motion.div>
       ))}
     </div>

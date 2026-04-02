@@ -1,0 +1,1 @@
+UPDATE public.categories SET description = 'Trilhas completas de HTML, CSS, Python, JavaScript, Java, Lisp, R, Julia e Scala — do básico ao avançado com projetos práticos.', tags = ARRAY['Multi-linguagem', 'Dev'] WHERE id = 'feaa606a-f6c4-4946-828f-c2f936be8cfc';
