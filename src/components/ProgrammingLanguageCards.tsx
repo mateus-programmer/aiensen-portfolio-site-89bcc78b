@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Terminal } from "lucide-react";
+import HighlightMatch from "@/components/HighlightMatch";
 
 interface LanguageInfo {
   name: string;
