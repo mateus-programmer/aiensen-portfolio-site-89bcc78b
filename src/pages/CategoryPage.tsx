@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useQueryClient } from "@tanstack/react-query";
 import type { Tables } from "@/integrations/supabase/types";
 import PdfUpload from "@/components/PdfUpload";
+import ProgrammingLanguageCards from "@/components/ProgrammingLanguageCards";
 import PdfFileItem from "@/components/PdfFileItem";
 
 type Category = Tables<"categories">;
