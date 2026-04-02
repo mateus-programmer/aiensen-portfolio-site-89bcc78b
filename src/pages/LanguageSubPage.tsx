@@ -59,7 +59,7 @@ const LanguageSubPage = () => {
             <ArrowLeft size={20} />
           </button>
           <span className="text-2xl">{lang.icon}</span>
-          <h1 className={`font-display text-lg font-bold ${lang.color}`}>
+          <h1 className="font-display text-lg font-bold" style={{ color: `hsl(${lang.accentHsl})` }}>
             {lang.name}
           </h1>
         </div>
