@@ -25,6 +25,7 @@ const App = () => (
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="/categoria/:id" element={<CategoryPage />} />
+            <Route path="/categoria/:id/linguagem/:slug" element={<LanguageSubPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

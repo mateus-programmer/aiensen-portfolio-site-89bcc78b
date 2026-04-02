@@ -52,6 +52,7 @@ const PdfUpload = ({ categoryId, defaultTags, onUploadComplete }: PdfUploadProps
             title: file.name.replace(/\.pdf$/i, ""),
             file_url: urlData.publicUrl,
             is_active: true,
+            ...(defaultTags && defaultTags.length > 0 ? { tags: defaultTags } : {}),
           });
 
         if (insertError) {
