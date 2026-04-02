@@ -92,7 +92,6 @@ const CategoryPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="border-b border-border bg-card/80 backdrop-blur-md sticky top-0 z-30">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center gap-4">
           <button
@@ -108,7 +107,6 @@ const CategoryPage = () => {
       </header>
 
       <div className="max-w-6xl mx-auto px-6 py-10">
-        {/* Category info */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -134,7 +132,6 @@ const CategoryPage = () => {
           )}
         </motion.div>
 
-        {/* Search bar */}
         <div className="relative max-w-md mb-6">
           <svg
             className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
@@ -159,7 +156,6 @@ const CategoryPage = () => {
           />
         </div>
 
-        {/* Programming language mini cards */}
         {category.title === "Cursos de Programação" && id && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -170,11 +166,10 @@ const CategoryPage = () => {
             <h2 className="font-display text-lg font-bold text-foreground mb-5">
               Escolha uma linguagem
             </h2>
-            <ProgrammingLanguageCards categoryId={id} />
+            <ProgrammingLanguageCards categoryId={id} searchQuery={search} />
           </motion.div>
         )}
 
-        {/* Content items - requires login */}
         {!user && !authLoading ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -194,7 +189,6 @@ const CategoryPage = () => {
           </motion.div>
         ) : (
           <>
-            {/* Admin upload */}
             {isAdmin && id && (
               <PdfUpload
                 categoryId={id}
@@ -288,6 +282,10 @@ const CategoryPage = () => {
                     Nenhum conteúdo encontrado para "{search}".
                   </p>
                 );
+              }
+
+              if (category.title === "Cursos de Programação" && (!items || items.length === 0)) {
+                return null;
               }
 
               return (
