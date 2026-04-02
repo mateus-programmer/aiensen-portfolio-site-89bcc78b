@@ -134,6 +134,31 @@ const CategoryPage = () => {
           )}
         </motion.div>
 
+        {/* Search bar */}
+        <div className="relative max-w-md mb-6">
+          <svg
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.3-4.3" />
+          </svg>
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Buscar conteúdos, tags..."
+            className="w-full bg-secondary border border-border rounded-lg pl-11 pr-4 py-2.5 text-foreground font-body text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+          />
+        </div>
+
         {/* Programming language mini cards */}
         {category.title === "Cursos de Programação" && id && (
           <motion.div
@@ -176,25 +201,6 @@ const CategoryPage = () => {
                 onUploadComplete={() => queryClient.invalidateQueries({ queryKey: ["content_items", id] })}
               />
             )}
-
-            {/* Search bar */}
-            <div className="relative max-w-md mb-6">
-                <svg
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
-                  width="16" height="16" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                >
-                  <circle cx="11" cy="11" r="8" />
-                  <path d="m21 21-4.3-4.3" />
-                </svg>
-                <input
-                  type="text"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Buscar conteúdos, tags..."
-                  className="w-full bg-secondary border border-border rounded-lg pl-11 pr-4 py-2.5 text-foreground font-body text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
-                />
-              </div>
 
             {(() => {
               const query = search.toLowerCase().trim();
