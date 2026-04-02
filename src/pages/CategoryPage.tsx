@@ -10,6 +10,7 @@ import type { Tables } from "@/integrations/supabase/types";
 import PdfUpload from "@/components/PdfUpload";
 import ProgrammingLanguageCards from "@/components/ProgrammingLanguageCards";
 import PdfFileItem from "@/components/PdfFileItem";
+import HighlightMatch from "@/components/HighlightMatch";
 
 type Category = Tables<"categories">;
 type ContentItem = Tables<"content_items">;
