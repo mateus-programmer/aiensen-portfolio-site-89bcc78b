@@ -8,6 +8,7 @@ import Index from "./pages/Index.tsx";
 import AuthPage from "./pages/AuthPage.tsx";
 import AdminPanel from "./pages/AdminPanel.tsx";
 import CategoryPage from "./pages/CategoryPage.tsx";
+import LanguageSubPage from "./pages/LanguageSubPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="/categoria/:id" element={<CategoryPage />} />
+            <Route path="/categoria/:id/linguagem/:slug" element={<LanguageSubPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

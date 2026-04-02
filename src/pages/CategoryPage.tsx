@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useQueryClient } from "@tanstack/react-query";
 import type { Tables } from "@/integrations/supabase/types";
 import PdfUpload from "@/components/PdfUpload";
+import ProgrammingLanguageCards from "@/components/ProgrammingLanguageCards";
 import PdfFileItem from "@/components/PdfFileItem";
 
 type Category = Tables<"categories">;
@@ -132,6 +133,21 @@ const CategoryPage = () => {
             </div>
           )}
         </motion.div>
+
+        {/* Programming language mini cards */}
+        {category.title === "Cursos de Programação" && id && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="mb-10"
+          >
+            <h2 className="font-display text-lg font-bold text-foreground mb-5">
+              Escolha uma linguagem
+            </h2>
+            <ProgrammingLanguageCards categoryId={id} />
+          </motion.div>
+        )}
 
         {/* Content items - requires login */}
         {!user && !authLoading ? (

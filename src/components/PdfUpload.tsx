@@ -5,10 +5,11 @@ import { toast } from "sonner";
 
 interface PdfUploadProps {
   categoryId: string;
+  defaultTags?: string[];
   onUploadComplete: () => void;
 }
 
-const PdfUpload = ({ categoryId, onUploadComplete }: PdfUploadProps) => {
+const PdfUpload = ({ categoryId, defaultTags, onUploadComplete }: PdfUploadProps) => {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -51,6 +52,7 @@ const PdfUpload = ({ categoryId, onUploadComplete }: PdfUploadProps) => {
             title: file.name.replace(/\.pdf$/i, ""),
             file_url: urlData.publicUrl,
             is_active: true,
+            ...(defaultTags && defaultTags.length > 0 ? { tags: defaultTags } : {}),
           });
 
         if (insertError) {
