@@ -242,17 +242,17 @@ const CategoryPage = () => {
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-display text-sm font-semibold text-foreground mb-1">
-                                {item.title}
+                                <HighlightMatch text={item.title} query={search} />
                               </h3>
                               {item.description && (
                                 <p className="font-body text-xs text-muted-foreground leading-relaxed mb-2">
-                                  {item.description}
+                                  <HighlightMatch text={item.description} query={search} />
                                 </p>
                               )}
                               {item.content && (
                                 <div className="bg-secondary/50 rounded-lg p-4 mt-3">
                                   <pre className="font-body text-xs text-foreground/80 whitespace-pre-wrap break-words">
-                                    {item.content}
+                                    <HighlightMatch text={item.content} query={search} />
                                   </pre>
                                 </div>
                               )}
