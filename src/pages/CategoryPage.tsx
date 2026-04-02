@@ -9,6 +9,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import type { Tables } from "@/integrations/supabase/types";
 import PdfUpload from "@/components/PdfUpload";
 import ProgrammingLanguageCards from "@/components/ProgrammingLanguageCards";
+import TheologyTopicCards from "@/components/TheologyTopicCards";
 import PdfFileItem from "@/components/PdfFileItem";
 import HighlightMatch from "@/components/HighlightMatch";
 
@@ -171,6 +172,20 @@ const CategoryPage = () => {
           </motion.div>
         )}
 
+        {category.title === "Vida & Teologia" && id && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="mb-10"
+          >
+            <h2 className="font-display text-lg font-bold text-foreground mb-5">
+              Escolha um tópico
+            </h2>
+            <TheologyTopicCards categoryId={id} searchQuery={search} />
+          </motion.div>
+        )}
+
         {!user && !authLoading ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -285,7 +300,7 @@ const CategoryPage = () => {
                 );
               }
 
-              if (category.title === "Cursos de Programação" && (!items || items.length === 0)) {
+              if ((category.title === "Cursos de Programação" || category.title === "Vida & Teologia") && (!items || items.length === 0)) {
                 return null;
               }
 
