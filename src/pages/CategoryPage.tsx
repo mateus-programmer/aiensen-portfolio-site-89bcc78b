@@ -178,8 +178,7 @@ const CategoryPage = () => {
             )}
 
             {/* Search bar */}
-            {items && items.length > 0 && (
-              <div className="relative max-w-md mb-6">
+            <div className="relative max-w-md mb-6">
                 <svg
                   className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
                   width="16" height="16" viewBox="0 0 24 24" fill="none"
