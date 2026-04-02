@@ -1,0 +1,1 @@
+DELETE FROM public.content_items WHERE category_id = 'feaa606a-f6c4-4946-828f-c2f936be8cfc' AND id IN ('04760023-a0fc-45eb-99fe-e1067b3c3ea3', 'b0330960-9eeb-4781-8472-e4d1651bd2e0', 'e4c6ee6d-b9ea-414c-9528-f934b1551bc8');
