@@ -27,6 +27,7 @@ const App = () => (
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="/categoria/:id" element={<CategoryPage />} />
             <Route path="/categoria/:id/linguagem/:slug" element={<LanguageSubPage />} />
+            <Route path="/categoria/:id/topico/:slug" element={<TheologySubPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

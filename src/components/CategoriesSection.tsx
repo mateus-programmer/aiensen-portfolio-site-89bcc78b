@@ -46,6 +46,7 @@ const staticCategories = [
   { title: "Prompts: Legalização das Drogas", description: "Prompts para análise crítica sobre legalização das drogas — impactos sociais, econômicos e de saúde pública.", image: cardDrogas, tags: ["Drogas", "Política Pública", "Sociedade"], neonColor: "cyan" as const },
   { title: "Prompts para Histórias Infantis", description: "Prompts criativos para geração de histórias infantis e juvenis — contos de fadas, aventuras, fábulas e narrativas educativas.", image: cardHistorias, tags: ["Infantil", "Juvenil", "Histórias"], neonColor: "cyan" as const },
   { title: "Aulas Engenharia de Software", description: "Materiais, PDFs e anotações de aulas de Engenharia de Software — metodologias, arquitetura, testes e boas práticas.", image: cardEngenharia, tags: ["Engenharia", "Software", "Faculdade"], neonColor: "cyan" as const },
+  { title: "Vida & Teologia", description: "Estudos aprofundados sobre doutrinas reformadas e temas teológicos — dos cinco pontos do calvinismo aos atributos de Deus.", image: cardVidaTeologia, tags: ["Teologia", "Doutrinas", "Reformada"], neonColor: "purple" as const },
 ];
 
 const CategoriesSection = () => {

@@ -300,7 +300,7 @@ const CategoryPage = () => {
                 );
               }
 
-              if (category.title === "Cursos de Programação" && (!items || items.length === 0)) {
+              if ((category.title === "Cursos de Programação" || category.title === "Vida & Teologia") && (!items || items.length === 0)) {
                 return null;
               }
 
