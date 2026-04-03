@@ -14,7 +14,7 @@ const FooterSection = () => {
 
         <div className="flex justify-center gap-6 mb-10">
           {[
-            { icon: Mail, href: "https://compose.mail.yahoo.com/?to=mateusleitesilva@yahoo.com", label: "Email" },
+            { icon: Mail, href: "https://mail.yahoo.com/d/compose/?to=mateusleitesilva@yahoo.com", label: "Email" },
             { icon: Instagram, href: "https://www.instagram.com/iensenmateus/", label: "Instagram" },
             { icon: Github, href: "https://github.com/mateus-programmer", label: "GitHub" },
             { icon: Linkedin, href: "https://www.linkedin.com/in/mateusiensen/", label: "LinkedIn" },
