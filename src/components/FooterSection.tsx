@@ -1,4 +1,4 @@
-import { Github, Linkedin, Mail, Instagram } from "lucide-react";
+import { Github, Linkedin, Mail, Instagram, MessageCircle } from "lucide-react";
 
 const FooterSection = () => {
   return (
@@ -18,6 +18,7 @@ const FooterSection = () => {
             { icon: Instagram, href: "https://www.instagram.com/iensenmateus/", label: "Instagram" },
             { icon: Github, href: "https://github.com/mateus-programmer", label: "GitHub" },
             { icon: Linkedin, href: "https://www.linkedin.com/in/mateusiensen/", label: "LinkedIn" },
+            { icon: MessageCircle, href: "https://wa.me/5511948574529", label: "WhatsApp" },
           ].map((s) => (
             <a
               key={s.label}
