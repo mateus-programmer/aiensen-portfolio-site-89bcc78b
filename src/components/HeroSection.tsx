@@ -44,7 +44,7 @@ const HeroSection = () => {
           </motion.p>
 
           <motion.div
-            className="flex flex-col sm:flex-row gap-4 justify-center"
+            className="flex justify-center"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7, duration: 0.8 }}
@@ -54,12 +54,6 @@ const HeroSection = () => {
               className="inline-flex items-center justify-center px-8 py-3 rounded-lg bg-primary text-primary-foreground font-display text-sm font-semibold tracking-wider uppercase transition-all hover:shadow-[0_0_30px_hsl(48_100%_50%/0.4)] active:scale-[0.98]"
             >
               Explorar Conteúdos
-            </a>
-            <a
-              href="#sobre"
-              className="inline-flex items-center justify-center px-8 py-3 rounded-lg border border-border text-foreground font-display text-sm font-semibold tracking-wider uppercase transition-all hover:border-neon-cyan hover:shadow-[0_0_20px_hsl(190_100%_50%/0.3)]"
-            >
-              Sobre o Projeto
             </a>
           </motion.div>
         </motion.div>
