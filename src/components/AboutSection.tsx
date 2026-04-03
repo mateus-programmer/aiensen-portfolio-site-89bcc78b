@@ -34,7 +34,7 @@ const AboutSection = () => {
             Sobre o <span className="neon-text-yellow">Projeto</span>
           </h2>
           <p className="font-alt text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            AIensen é uma plataforma pessoal que combina Inteligência Artificial com o sobrenome do criador —
+            Eu criei o AIensen como uma plataforma pessoal que combina Inteligência Artificial com o meu sobrenome —
             funcionando como um hub central para organizar e acessar prompts, cursos e materiais temáticos.
           </p>
         </motion.div>
