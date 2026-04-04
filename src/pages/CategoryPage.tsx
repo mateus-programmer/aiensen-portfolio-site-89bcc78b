@@ -69,10 +69,8 @@ const CategoryPage = () => {
     },
     enabled: !!id && !!user,
     select: (data) => {
-      // For theology category, exclude items that belong to specific topic sub-pages
       if (category?.title === "Vida & Teologia") {
-        const { topics } = require("@/components/TheologyTopicCards");
-        const topicNames = (topics as { name: string }[]).map((t) => t.name);
+        const topicNames = theologyTopics.map((t) => t.name);
         return data.filter(
           (item) => !(item.tags || []).some((tag) => topicNames.includes(tag))
         );
