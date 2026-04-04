@@ -9,7 +9,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import type { Tables } from "@/integrations/supabase/types";
 import PdfUpload from "@/components/PdfUpload";
 import ProgrammingLanguageCards from "@/components/ProgrammingLanguageCards";
-import TheologyTopicCards from "@/components/TheologyTopicCards";
+import TheologyTopicCards, { topics as theologyTopics } from "@/components/TheologyTopicCards";
 import PdfFileItem from "@/components/PdfFileItem";
 import HighlightMatch from "@/components/HighlightMatch";
 
@@ -68,6 +68,15 @@ const CategoryPage = () => {
       return data as ContentItem[];
     },
     enabled: !!id && !!user,
+    select: (data) => {
+      if (category?.title === "Vida & Teologia") {
+        const topicNames = theologyTopics.map((t) => t.name);
+        return data.filter(
+          (item) => !(item.tags || []).some((tag) => topicNames.includes(tag))
+        );
+      }
+      return data;
+    },
   });
 
   const isLoading = loadingCategory || loadingItems || authLoading;
