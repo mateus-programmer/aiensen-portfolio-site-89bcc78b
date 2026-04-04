@@ -9,7 +9,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import type { Tables } from "@/integrations/supabase/types";
 import PdfUpload from "@/components/PdfUpload";
 import ProgrammingLanguageCards from "@/components/ProgrammingLanguageCards";
-import TheologyTopicCards from "@/components/TheologyTopicCards";
+import TheologyTopicCards, { topics as theologyTopics } from "@/components/TheologyTopicCards";
 import PdfFileItem from "@/components/PdfFileItem";
 import HighlightMatch from "@/components/HighlightMatch";
 
