@@ -75,6 +75,13 @@ const topics: TopicInfo[] = [
     icon: "📜",
     description: "O decreto eterno de Deus sobre o destino das almas",
   },
+  {
+    name: "Teologia Sistemática",
+    slug: "teologia-sistematica",
+    accentHsl: "200 85% 55%",
+    icon: "📚",
+    description: "Estudo organizado e abrangente das doutrinas da fé cristã",
+  },
 ];
 
 interface Props {
