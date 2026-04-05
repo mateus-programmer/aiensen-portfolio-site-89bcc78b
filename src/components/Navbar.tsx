@@ -113,6 +113,17 @@ const Navbar = () => {
             className="md:hidden bg-background/95 backdrop-blur-xl border-b border-border overflow-hidden"
           >
             <div className="px-6 py-4 flex flex-col gap-4">
+              {/* Mobile search */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={14} />
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Buscar categorias, tags..."
+                  className="w-full bg-secondary border border-border rounded-lg pl-9 pr-3 py-2 text-foreground font-alt text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                />
+              </div>
               {links.map((l) => (
                 <a key={l.label} href={l.href} onClick={() => setOpen(false)} className="font-alt text-sm text-muted-foreground hover:text-foreground transition-colors">
                   {l.label}
