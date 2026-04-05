@@ -6,8 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const links = [
   { label: "Home", href: "#" },
-  { label: "Categorias", href: "#categorias" },
-  { label: "Sobre", href: "#sobre" },
+  { label: "Sobre o Projeto", href: "#sobre" },
   { label: "Contato", href: "#contato" },
 ];
 
