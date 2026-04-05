@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -52,6 +52,15 @@ const staticCategories = [
 const CategoriesSection = () => {
   const [search, setSearch] = useState("");
 
+  // Listen for search from Navbar
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      setSearch(detail || "");
+    };
+    window.addEventListener("navbar-search", handler);
+    return () => window.removeEventListener("navbar-search", handler);
+  }, []);
   const { data: dbCategories } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
@@ -103,24 +112,6 @@ const CategoriesSection = () => {
             Explore cada categoria e acesse uma biblioteca completa de prompts, cursos e materiais temáticos.
           </p>
 
-          {/* Search */}
-          <div className="relative max-w-md mx-auto">
-            <svg
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
-              width="16" height="16" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <path d="m21 21-4.3-4.3" />
-            </svg>
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar categorias, tags..."
-              className="w-full bg-secondary border border-border rounded-lg pl-11 pr-4 py-2.5 text-foreground font-body text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
-            />
-          </div>
         </motion.div>
 
         {filtered.length === 0 ? (
