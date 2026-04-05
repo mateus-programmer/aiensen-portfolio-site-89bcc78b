@@ -84,13 +84,16 @@ const CategoriesSection = () => {
       }))
     : staticCategories;
 
-  const query = search.toLowerCase().trim();
+  const normalize = (s: string) =>
+    s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+  const query = normalize(search.trim());
   const filtered = query
     ? categories.filter(
         (cat) =>
-          cat.title.toLowerCase().includes(query) ||
-          cat.description.toLowerCase().includes(query) ||
-          cat.tags.some((t) => t.toLowerCase().includes(query))
+          normalize(cat.title).includes(query) ||
+          normalize(cat.description).includes(query) ||
+          cat.tags.some((t) => normalize(t).includes(query))
       )
     : categories;
 
