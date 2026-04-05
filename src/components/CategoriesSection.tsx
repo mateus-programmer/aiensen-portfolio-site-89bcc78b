@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -49,18 +48,12 @@ const staticCategories = [
   { title: "Vida & Teologia", description: "Estudos aprofundados sobre doutrinas reformadas e temas teológicos — dos cinco pontos do calvinismo aos atributos de Deus.", image: cardVidaTeologia, tags: ["Teologia", "Doutrinas", "Reformada"], neonColor: "purple" as const },
 ];
 
-const CategoriesSection = () => {
-  const [search, setSearch] = useState("");
+interface CategoriesSectionProps {
+  search?: string;
+}
 
-  // Listen for search from Navbar
-  useEffect(() => {
-    const handler = (e: Event) => {
-      const detail = (e as CustomEvent).detail;
-      setSearch(detail || "");
-    };
-    window.addEventListener("navbar-search", handler);
-    return () => window.removeEventListener("navbar-search", handler);
-  }, []);
+const CategoriesSection = ({ search: externalSearch }: CategoriesSectionProps = {}) => {
+  const search = externalSearch || "";
   const { data: dbCategories } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
