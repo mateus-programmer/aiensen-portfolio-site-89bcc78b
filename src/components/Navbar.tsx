@@ -10,18 +10,21 @@ const links = [
   { label: "Contato", href: "#contato" },
 ];
 
-const Navbar = () => {
+interface NavbarProps {
+  search?: string;
+  onSearchChange?: (value: string) => void;
+}
+
+const Navbar = ({ search: externalSearch, onSearchChange }: NavbarProps = {}) => {
   const [open, setOpen] = useState(false);
-  const [search, setSearch] = useState("");
+  const [internalSearch, setInternalSearch] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
   const { user, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
 
-  // Dispatch search to CategoriesSection
-  useEffect(() => {
-    window.dispatchEvent(new CustomEvent("navbar-search", { detail: search }));
-  }, [search]);
+  const search = externalSearch !== undefined ? externalSearch : internalSearch;
+  const setSearch = onSearchChange || setInternalSearch;
 
   // Close search on outside click
   useEffect(() => {
