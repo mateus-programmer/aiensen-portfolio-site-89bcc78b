@@ -12,8 +12,27 @@ const links = [
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
   const { user, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
+
+  // Dispatch search to CategoriesSection
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("navbar-search", { detail: search }));
+  }, [search]);
+
+  // Close search on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setSearchOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border">
@@ -25,6 +44,35 @@ const Navbar = () => {
 
         {/* Desktop */}
         <div className="hidden md:flex items-center gap-8">
+          {/* Search */}
+          <div ref={searchRef} className="relative">
+            {searchOpen ? (
+              <div className="flex items-center gap-2">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={14} />
+                  <input
+                    type="text"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Buscar categorias, tags..."
+                    autoFocus
+                    className="w-56 bg-secondary border border-border rounded-lg pl-9 pr-3 py-1.5 text-foreground font-alt text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                  />
+                </div>
+                <button onClick={() => { setSearch(""); setSearchOpen(false); }} className="text-muted-foreground hover:text-foreground">
+                  <X size={14} />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setSearchOpen(true)}
+                className="inline-flex items-center gap-1.5 font-alt text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <Search size={14} /> Buscar
+              </button>
+            )}
+          </div>
+
           {links.map((l) => (
             <a key={l.label} href={l.href} className="font-alt text-sm text-muted-foreground hover:text-foreground transition-colors">
               {l.label}
