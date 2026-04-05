@@ -52,6 +52,15 @@ const staticCategories = [
 const CategoriesSection = () => {
   const [search, setSearch] = useState("");
 
+  // Listen for search from Navbar
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      setSearch(detail || "");
+    };
+    window.addEventListener("navbar-search", handler);
+    return () => window.removeEventListener("navbar-search", handler);
+  }, []);
   const { data: dbCategories } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
