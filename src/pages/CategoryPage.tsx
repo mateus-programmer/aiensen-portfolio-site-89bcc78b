@@ -10,6 +10,7 @@ import type { Tables } from "@/integrations/supabase/types";
 import PdfUpload from "@/components/PdfUpload";
 import ProgrammingLanguageCards from "@/components/ProgrammingLanguageCards";
 import TheologyTopicCards, { topics as theologyTopics } from "@/components/TheologyTopicCards";
+import AIToolCards from "@/components/AIToolCards";
 import PdfFileItem from "@/components/PdfFileItem";
 import HighlightMatch from "@/components/HighlightMatch";
 
@@ -195,6 +196,20 @@ const CategoryPage = () => {
           </motion.div>
         )}
 
+        {category.title === "Ferramentas de IA e Programação" && id && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="mb-10"
+          >
+            <h2 className="font-display text-lg font-bold text-foreground mb-5">
+              Escolha uma ferramenta
+            </h2>
+            <AIToolCards categoryId={id} searchQuery={search} />
+          </motion.div>
+        )}
+
         {!user && !authLoading ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -309,7 +324,7 @@ const CategoryPage = () => {
                 );
               }
 
-              if ((category.title === "Cursos de Programação" || category.title === "Vida & Teologia") && (!items || items.length === 0)) {
+              if ((category.title === "Cursos de Programação" || category.title === "Vida & Teologia" || category.title === "Ferramentas de IA e Programação") && (!items || items.length === 0)) {
                 return null;
               }
 
