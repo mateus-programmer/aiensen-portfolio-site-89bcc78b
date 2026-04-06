@@ -15,6 +15,7 @@ import cardDrogas from "@/assets/card-legalizacao-drogas.jpg";
 import cardHistorias from "@/assets/card-historias-infantis.jpg";
 import cardEngenharia from "@/assets/card-aulas-engenharia.jpg";
 import cardVidaTeologia from "@/assets/card-vida-teologia.jpg";
+import cardFerramentasIA from "@/assets/card-ferramentas-ia.jpg";
 
 const fallbackImages: Record<string, string> = {
   "Prompts para Imagens": cardPromptsImagens,
@@ -30,6 +31,7 @@ const fallbackImages: Record<string, string> = {
   "Prompts para Histórias Infantis": cardHistorias,
   "Aulas Engenharia de Software": cardEngenharia,
   "Vida & Teologia": cardVidaTeologia,
+  "Ferramentas de IA e Programação": cardFerramentasIA,
 };
 
 const staticCategories = [
@@ -46,6 +48,7 @@ const staticCategories = [
   { title: "Prompts para Histórias Infantis", description: "Prompts criativos para geração de histórias infantis e juvenis — contos de fadas, aventuras, fábulas e narrativas educativas.", image: cardHistorias, tags: ["Infantil", "Juvenil", "Histórias"], neonColor: "cyan" as const },
   { title: "Aulas Engenharia de Software", description: "Materiais, PDFs e anotações de aulas de Engenharia de Software — metodologias, arquitetura, testes e boas práticas.", image: cardEngenharia, tags: ["Engenharia", "Software", "Faculdade"], neonColor: "cyan" as const },
   { title: "Vida & Teologia", description: "Estudos aprofundados sobre doutrinas reformadas e temas teológicos — dos cinco pontos do calvinismo aos atributos de Deus.", image: cardVidaTeologia, tags: ["Teologia", "Doutrinas", "Reformada"], neonColor: "purple" as const },
+  { title: "Ferramentas de IA e Programação", description: "Links e recursos das principais ferramentas de Inteligência Artificial e programação que utilizo no dia a dia.", image: cardFerramentasIA, tags: ["IA", "Ferramentas", "Dev"], neonColor: "cyan" as const },
 ];
 
 interface CategoriesSectionProps {
