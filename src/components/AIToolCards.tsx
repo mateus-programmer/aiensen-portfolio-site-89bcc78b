@@ -156,21 +156,6 @@ interface Props {
 const AIToolCards = ({ categoryId, searchQuery = "" }: Props) => {
   const query = searchQuery.toLowerCase().trim();
   const [pulseKey, setPulseKey] = useState(0);
-  const filtered = query
-    ? tools.filter(
-        (t) =>
-          t.name.toLowerCase().includes(query) ||
-          t.description.toLowerCase().includes(query)
-      )
-    : tools;
-
-  if (filtered.length === 0) {
-    return (
-      <div className="rounded-xl border border-border bg-card/60 px-5 py-6 text-sm text-muted-foreground backdrop-blur-sm">
-        Nenhuma ferramenta encontrada para "{searchQuery}".
-      </div>
-    );
-  }
 
   const filterTools = (toolList: AITool[]) => {
     if (!query) return toolList;
@@ -193,6 +178,14 @@ const AIToolCards = ({ categoryId, searchQuery = "" }: Props) => {
       setPulseKey(prev => prev + 1);
     }
   }, [filteredText.length, filteredProgramming.length, filteredMedia.length, query]);
+
+  if (!hasResults) {
+    return (
+      <div className="rounded-xl border border-border bg-card/60 px-5 py-6 text-sm text-muted-foreground backdrop-blur-sm">
+        Nenhuma ferramenta encontrada para "{searchQuery}".
+      </div>
+    );
+  }
 
   if (!hasResults) {
     return (
