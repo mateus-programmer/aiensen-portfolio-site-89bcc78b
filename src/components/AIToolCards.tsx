@@ -59,6 +59,14 @@ const tools: AITool[] = [
     icon: "🐙",
     description: "Plataforma de hospedagem de código e colaboração para desenvolvedores",
   },
+  {
+    name: "Cursor",
+    slug: "cursor",
+    url: "https://cursor.sh",
+    accentHsl: "270 80% 60%",
+    icon: "⚡",
+    description: "Editor de código com IA integrada para desenvolvimento rápido e inteligente",
+  },
 ];
 
 interface Props {
