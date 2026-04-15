@@ -8,6 +8,8 @@ import PerplexityIcon from "./icons/PerplexityIcon";
 import LovableIcon from "./icons/LovableIcon";
 import GitHubIcon from "./icons/GitHubIcon";
 import CursorIcon from "./icons/CursorIcon";
+import ReplitIcon from "./icons/ReplitIcon";
+import BoltIcon from "./icons/BoltIcon";
 
 interface AITool {
   name: string;
@@ -74,6 +76,22 @@ const tools: AITool[] = [
     accentHsl: "270 80% 60%",
     icon: <CursorIcon className="w-6 h-6" />,
     description: "Editor de código com IA integrada para desenvolvimento rápido e inteligente",
+  },
+  {
+    name: "Replit",
+    slug: "replit",
+    url: "https://replit.com",
+    accentHsl: "15 85% 55%",
+    icon: <ReplitIcon className="w-6 h-6" />,
+    description: "Ambiente de desenvolvimento online com IA para codificar, colaborar e implantar",
+  },
+  {
+    name: "Bolt.new",
+    slug: "bolt",
+    url: "https://bolt.new",
+    accentHsl: "45 95% 55%",
+    icon: <BoltIcon className="w-6 h-6" />,
+    description: "Plataforma de IA para criar e implantar aplicações web instantaneamente",
   },
 ];
 
