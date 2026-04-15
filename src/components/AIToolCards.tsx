@@ -1,6 +1,6 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ExternalLink } from "lucide-react";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import ChatGPTIcon from "./icons/ChatGPTIcon";
 import ClaudeIcon from "./icons/ClaudeIcon";
 import GeminiIcon from "./icons/GeminiIcon";
@@ -155,21 +155,7 @@ interface Props {
 
 const AIToolCards = ({ categoryId, searchQuery = "" }: Props) => {
   const query = searchQuery.toLowerCase().trim();
-  const filtered = query
-    ? tools.filter(
-        (t) =>
-          t.name.toLowerCase().includes(query) ||
-          t.description.toLowerCase().includes(query)
-      )
-    : tools;
-
-  if (filtered.length === 0) {
-    return (
-      <div className="rounded-xl border border-border bg-card/60 px-5 py-6 text-sm text-muted-foreground backdrop-blur-sm">
-        Nenhuma ferramenta encontrada para "{searchQuery}".
-      </div>
-    );
-  }
+  const [pulseKey, setPulseKey] = useState(0);
 
   const filterTools = (toolList: AITool[]) => {
     if (!query) return toolList;
@@ -185,6 +171,21 @@ const AIToolCards = ({ categoryId, searchQuery = "" }: Props) => {
   const filteredMedia = filterTools(mediaTools);
 
   const hasResults = filteredText.length > 0 || filteredProgramming.length > 0 || filteredMedia.length > 0;
+
+  // Trigger pulse animation when filtered counts change
+  useEffect(() => {
+    if (query) {
+      setPulseKey(prev => prev + 1);
+    }
+  }, [filteredText.length, filteredProgramming.length, filteredMedia.length, query]);
+
+  if (!hasResults) {
+    return (
+      <div className="rounded-xl border border-border bg-card/60 px-5 py-6 text-sm text-muted-foreground backdrop-blur-sm">
+        Nenhuma ferramenta encontrada para "{searchQuery}".
+      </div>
+    );
+  }
 
   if (!hasResults) {
     return (
@@ -273,16 +274,32 @@ const AIToolCards = ({ categoryId, searchQuery = "" }: Props) => {
         >
           {title}
         </h3>
-        <div
-          className="flex items-center justify-center min-w-[2rem] h-8 px-2.5 rounded-md font-display text-xs font-bold"
-          style={{
-            color: `hsl(${accentColor})`,
-            background: `hsl(${accentColor} / 0.15)`,
-            border: `1px solid hsl(${accentColor} / 0.25)`,
-          }}
-        >
-          {count}
-        </div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`${count}-${pulseKey}`}
+            initial={{ scale: 1 }}
+            animate={{ 
+              scale: [1, 1.2, 1],
+              boxShadow: [
+                `0 0 0 0 hsl(${accentColor} / 0)`,
+                `0 0 0 4px hsl(${accentColor} / 0.3)`,
+                `0 0 0 0 hsl(${accentColor} / 0)`
+              ]
+            }}
+            transition={{ 
+              duration: 0.5,
+              ease: [0.4, 0, 0.2, 1]
+            }}
+            className="flex items-center justify-center min-w-[2rem] h-8 px-2.5 rounded-md font-display text-xs font-bold"
+            style={{
+              color: `hsl(${accentColor})`,
+              background: `hsl(${accentColor} / 0.15)`,
+              border: `1px solid hsl(${accentColor} / 0.25)`,
+            }}
+          >
+            {count}
+          </motion.div>
+        </AnimatePresence>
       </div>
       <div
         className="flex-1 h-px"
