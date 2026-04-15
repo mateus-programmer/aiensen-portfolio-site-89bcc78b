@@ -82,7 +82,7 @@ const languages: LanguageInfo[] = [
     name: "Scala",
     slug: "scala",
     accentHsl: "350 80% 58%",
-    icon: "🔥",
+    icon: <ScalaIcon className="w-6 h-6" />,
     description: "Funcional + orientado a objetos na JVM",
   },
 ];
