@@ -260,9 +260,9 @@ const AIToolCards = ({ categoryId, searchQuery = "" }: Props) => {
     </motion.a>
   );
 
-  const CategorySeparator = ({ title, accentColor }: { title: string; accentColor: string }) => (
+  const CategorySeparator = ({ title, accentColor, count }: { title: string; accentColor: string; count: number }) => (
     <div className="flex items-center gap-4 my-8 first:mt-0">
-      <div className="relative">
+      <div className="relative flex items-center gap-3">
         <h3
           className="font-display text-lg font-bold tracking-wide px-4 py-2 rounded-lg relative z-10"
           style={{
@@ -273,6 +273,16 @@ const AIToolCards = ({ categoryId, searchQuery = "" }: Props) => {
         >
           {title}
         </h3>
+        <div
+          className="flex items-center justify-center min-w-[2rem] h-8 px-2.5 rounded-md font-display text-xs font-bold"
+          style={{
+            color: `hsl(${accentColor})`,
+            background: `hsl(${accentColor} / 0.15)`,
+            border: `1px solid hsl(${accentColor} / 0.25)`,
+          }}
+        >
+          {count}
+        </div>
       </div>
       <div
         className="flex-1 h-px"
@@ -287,7 +297,7 @@ const AIToolCards = ({ categoryId, searchQuery = "" }: Props) => {
     <div className="space-y-8">
       {filteredText.length > 0 && (
         <>
-          <CategorySeparator title="IAs de Texto" accentColor="190 85% 50%" />
+          <CategorySeparator title="IAs de Texto" accentColor="190 85% 50%" count={filteredText.length} />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {filteredText.map((tool, i) => renderToolCard(tool, i))}
           </div>
@@ -296,7 +306,7 @@ const AIToolCards = ({ categoryId, searchQuery = "" }: Props) => {
 
       {filteredProgramming.length > 0 && (
         <>
-          <CategorySeparator title="Ferramentas de Programação" accentColor="270 80% 60%" />
+          <CategorySeparator title="Ferramentas de Programação" accentColor="270 80% 60%" count={filteredProgramming.length} />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {filteredProgramming.map((tool, i) => renderToolCard(tool, i))}
           </div>
@@ -305,7 +315,7 @@ const AIToolCards = ({ categoryId, searchQuery = "" }: Props) => {
 
       {filteredMedia.length > 0 && (
         <>
-          <CategorySeparator title="Imagem & Vídeo" accentColor="165 75% 50%" />
+          <CategorySeparator title="Imagem & Vídeo" accentColor="165 75% 50%" count={filteredMedia.length} />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {filteredMedia.map((tool, i) => renderToolCard(tool, i))}
           </div>
