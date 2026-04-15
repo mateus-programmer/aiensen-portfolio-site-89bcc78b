@@ -1,12 +1,20 @@
 import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
+import { ReactNode } from "react";
+import ChatGPTIcon from "./icons/ChatGPTIcon";
+import ClaudeIcon from "./icons/ClaudeIcon";
+import GeminiIcon from "./icons/GeminiIcon";
+import PerplexityIcon from "./icons/PerplexityIcon";
+import LovableIcon from "./icons/LovableIcon";
+import GitHubIcon from "./icons/GitHubIcon";
+import CursorIcon from "./icons/CursorIcon";
 
 interface AITool {
   name: string;
   slug: string;
   url: string;
   accentHsl: string;
-  icon: string;
+  icon: ReactNode;
   description: string;
 }
 
@@ -16,7 +24,7 @@ const tools: AITool[] = [
     slug: "chatgpt",
     url: "https://chat.openai.com",
     accentHsl: "160 80% 50%",
-    icon: "🤖",
+    icon: <ChatGPTIcon className="w-6 h-6" />,
     description: "Assistente de IA conversacional da OpenAI para geração de texto, código e mais",
   },
   {
@@ -24,7 +32,7 @@ const tools: AITool[] = [
     slug: "claude",
     url: "https://claude.ai",
     accentHsl: "25 90% 55%",
-    icon: "🧠",
+    icon: <ClaudeIcon className="w-6 h-6" />,
     description: "IA avançada da Anthropic para análise, escrita e raciocínio complexo",
   },
   {
@@ -32,7 +40,7 @@ const tools: AITool[] = [
     slug: "gemini",
     url: "https://gemini.google.com",
     accentHsl: "210 90% 55%",
-    icon: "💎",
+    icon: <GeminiIcon className="w-6 h-6" />,
     description: "Modelo multimodal do Google para texto, imagem e código",
   },
   {
@@ -40,7 +48,7 @@ const tools: AITool[] = [
     slug: "perplexity",
     url: "https://www.perplexity.ai",
     accentHsl: "190 85% 50%",
-    icon: "🔍",
+    icon: <PerplexityIcon className="w-6 h-6" />,
     description: "Motor de busca com IA para pesquisas precisas e referenciadas",
   },
   {
@@ -48,7 +56,7 @@ const tools: AITool[] = [
     slug: "lovable",
     url: "https://lovable.dev",
     accentHsl: "330 85% 60%",
-    icon: "💜",
+    icon: <LovableIcon className="w-6 h-6" />,
     description: "Plataforma de desenvolvimento com IA para criar aplicações web completas",
   },
   {
@@ -56,7 +64,7 @@ const tools: AITool[] = [
     slug: "github",
     url: "https://github.com",
     accentHsl: "240 10% 60%",
-    icon: "🐙",
+    icon: <GitHubIcon className="w-6 h-6" />,
     description: "Plataforma de hospedagem de código e colaboração para desenvolvedores",
   },
   {
@@ -64,7 +72,7 @@ const tools: AITool[] = [
     slug: "cursor",
     url: "https://cursor.sh",
     accentHsl: "270 80% 60%",
-    icon: "⚡",
+    icon: <CursorIcon className="w-6 h-6" />,
     description: "Editor de código com IA integrada para desenvolvimento rápido e inteligente",
   },
 ];
@@ -124,10 +132,11 @@ const AIToolCards = ({ categoryId, searchQuery = "" }: Props) => {
           <div className="relative p-5 flex items-start gap-4">
             {/* Icon with glow ring */}
             <div
-              className="relative flex items-center justify-center w-12 h-12 rounded-lg text-2xl flex-shrink-0 transition-all duration-300 group-hover:scale-110"
+              className="relative flex items-center justify-center w-12 h-12 rounded-lg flex-shrink-0 transition-all duration-300 group-hover:scale-110"
               style={{
                 background: `hsl(${tool.accentHsl} / 0.12)`,
                 border: `1px solid hsl(${tool.accentHsl} / 0.25)`,
+                color: `hsl(${tool.accentHsl})`,
               }}
             >
               <span className="relative z-10">{tool.icon}</span>
