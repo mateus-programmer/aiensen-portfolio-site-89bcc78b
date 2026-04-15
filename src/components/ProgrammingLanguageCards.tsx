@@ -1,13 +1,23 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Terminal } from "lucide-react";
+import { ReactNode } from "react";
 import HighlightMatch from "@/components/HighlightMatch";
+import HTMLIcon from "@/components/icons/HTMLIcon";
+import CSSIcon from "@/components/icons/CSSIcon";
+import PythonIcon from "@/components/icons/PythonIcon";
+import JavaScriptIcon from "@/components/icons/JavaScriptIcon";
+import JavaIcon from "@/components/icons/JavaIcon";
+import LispIcon from "@/components/icons/LispIcon";
+import RLangIcon from "@/components/icons/RLangIcon";
+import JuliaIcon from "@/components/icons/JuliaIcon";
+import ScalaIcon from "@/components/icons/ScalaIcon";
 
 interface LanguageInfo {
   name: string;
   slug: string;
   accentHsl: string;
-  icon: string;
+  icon: ReactNode;
   description: string;
 }
 
@@ -16,63 +26,63 @@ const languages: LanguageInfo[] = [
     name: "HTML",
     slug: "html",
     accentHsl: "15 90% 55%",
-    icon: "🌐",
+    icon: <HTMLIcon className="w-6 h-6" />,
     description: "Estrutura e marcação web",
   },
   {
     name: "CSS",
     slug: "css",
     accentHsl: "210 90% 55%",
-    icon: "🎨",
+    icon: <CSSIcon className="w-6 h-6" />,
     description: "Estilização e layout",
   },
   {
     name: "Python",
     slug: "python",
     accentHsl: "48 100% 50%",
-    icon: "🐍",
+    icon: <PythonIcon className="w-6 h-6" />,
     description: "Ciência de dados e automação",
   },
   {
     name: "JavaScript",
     slug: "javascript",
     accentHsl: "50 95% 55%",
-    icon: "⚡",
+    icon: <JavaScriptIcon className="w-6 h-6" />,
     description: "Web interativa e full-stack",
   },
   {
     name: "Java",
     slug: "java",
     accentHsl: "0 75% 55%",
-    icon: "☕",
+    icon: <JavaIcon className="w-6 h-6" />,
     description: "Aplicações enterprise",
   },
   {
     name: "Lisp",
     slug: "lisp",
     accentHsl: "140 70% 50%",
-    icon: "🧠",
+    icon: <LispIcon className="w-6 h-6" />,
     description: "Programação funcional e IA clássica",
   },
   {
     name: "R",
     slug: "r",
     accentHsl: "200 85% 55%",
-    icon: "📊",
+    icon: <RLangIcon className="w-6 h-6" />,
     description: "Estatística e análise de dados",
   },
   {
     name: "Julia",
     slug: "julia",
     accentHsl: "270 80% 60%",
-    icon: "🔬",
+    icon: <JuliaIcon className="w-6 h-6" />,
     description: "Computação científica de alto desempenho",
   },
   {
     name: "Scala",
     slug: "scala",
     accentHsl: "350 80% 58%",
-    icon: "🔥",
+    icon: <ScalaIcon className="w-6 h-6" />,
     description: "Funcional + orientado a objetos na JVM",
   },
 ];
