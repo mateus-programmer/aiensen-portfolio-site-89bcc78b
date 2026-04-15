@@ -26,7 +26,7 @@ const languages: LanguageInfo[] = [
     name: "HTML",
     slug: "html",
     accentHsl: "15 90% 55%",
-    icon: "🌐",
+    icon: <HTMLIcon className="w-6 h-6" />,
     description: "Estrutura e marcação web",
   },
   {
