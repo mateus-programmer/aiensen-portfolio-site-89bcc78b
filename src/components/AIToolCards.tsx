@@ -26,6 +26,7 @@ interface AITool {
 }
 
 const tools: AITool[] = [
+  // IAs de Texto
   {
     name: "ChatGPT",
     slug: "chatgpt",
@@ -58,6 +59,15 @@ const tools: AITool[] = [
     icon: <PerplexityIcon className="w-6 h-6" />,
     description: "Motor de busca com IA para pesquisas precisas e referenciadas",
   },
+  {
+    name: "DeepSeek",
+    slug: "deepseek",
+    url: "https://www.deepseek.com",
+    accentHsl: "250 70% 60%",
+    icon: <DeepSeekIcon className="w-6 h-6" />,
+    description: "Modelo de IA avançado para raciocínio, código e análise complexa",
+  },
+  // Ferramentas de Programação
   {
     name: "Lovable",
     slug: "lovable",
@@ -107,6 +117,15 @@ const tools: AITool[] = [
     description: "Ferramenta da Vercel com IA para gerar interfaces e componentes UI rapidamente",
   },
   {
+    name: "WindSurf",
+    slug: "windsurf",
+    url: "https://codeium.com/windsurf",
+    accentHsl: "200 85% 55%",
+    icon: <WindSurfIcon className="w-6 h-6" />,
+    description: "Editor de código com IA da Codeium para fluxos de desenvolvimento assistido",
+  },
+  // Ferramentas de Imagem e Vídeo
+  {
     name: "Midjourney",
     slug: "midjourney",
     url: "https://www.midjourney.com",
@@ -121,22 +140,6 @@ const tools: AITool[] = [
     accentHsl: "165 75% 50%",
     icon: <RunwayIcon className="w-6 h-6" />,
     description: "Plataforma de IA para geração e edição de vídeos com modelos generativos",
-  },
-  {
-    name: "WindSurf",
-    slug: "windsurf",
-    url: "https://codeium.com/windsurf",
-    accentHsl: "200 85% 55%",
-    icon: <WindSurfIcon className="w-6 h-6" />,
-    description: "Editor de código com IA da Codeium para fluxos de desenvolvimento assistido",
-  },
-  {
-    name: "DeepSeek",
-    slug: "deepseek",
-    url: "https://www.deepseek.com",
-    accentHsl: "250 70% 60%",
-    icon: <DeepSeekIcon className="w-6 h-6" />,
-    description: "Modelo de IA avançado para raciocínio, código e análise complexa",
   },
 ];
 
