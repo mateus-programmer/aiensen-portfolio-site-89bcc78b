@@ -1,13 +1,23 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Terminal } from "lucide-react";
+import { ReactNode } from "react";
 import HighlightMatch from "@/components/HighlightMatch";
+import HTMLIcon from "@/components/icons/HTMLIcon";
+import CSSIcon from "@/components/icons/CSSIcon";
+import PythonIcon from "@/components/icons/PythonIcon";
+import JavaScriptIcon from "@/components/icons/JavaScriptIcon";
+import JavaIcon from "@/components/icons/JavaIcon";
+import LispIcon from "@/components/icons/LispIcon";
+import RLangIcon from "@/components/icons/RLangIcon";
+import JuliaIcon from "@/components/icons/JuliaIcon";
+import ScalaIcon from "@/components/icons/ScalaIcon";
 
 interface LanguageInfo {
   name: string;
   slug: string;
   accentHsl: string;
-  icon: string;
+  icon: ReactNode;
   description: string;
 }
 
