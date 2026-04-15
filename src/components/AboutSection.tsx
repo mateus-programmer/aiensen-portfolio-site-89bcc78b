@@ -31,7 +31,7 @@ const AboutSection = () => {
           className="text-center mb-16"
         >
           <h2 className="font-display text-3xl md:text-4xl font-bold tracking-tight mb-4 text-foreground">
-            Sobre o <span className="neon-text-yellow">Projeto</span>
+            Sobre <span className="neon-text-yellow">mim</span>
           </h2>
           <p className="font-alt text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             Eu criei o AIensen como uma plataforma pessoal que combina Inteligência Artificial com o meu sobrenome —
