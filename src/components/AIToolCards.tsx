@@ -10,6 +10,11 @@ import GitHubIcon from "./icons/GitHubIcon";
 import CursorIcon from "./icons/CursorIcon";
 import ReplitIcon from "./icons/ReplitIcon";
 import BoltIcon from "./icons/BoltIcon";
+import V0Icon from "./icons/V0Icon";
+import MidjourneyIcon from "./icons/MidjourneyIcon";
+import RunwayIcon from "./icons/RunwayIcon";
+import WindSurfIcon from "./icons/WindSurfIcon";
+import DeepSeekIcon from "./icons/DeepSeekIcon";
 
 interface AITool {
   name: string;
@@ -92,6 +97,46 @@ const tools: AITool[] = [
     accentHsl: "45 95% 55%",
     icon: <BoltIcon className="w-6 h-6" />,
     description: "Plataforma de IA para criar e implantar aplicações web instantaneamente",
+  },
+  {
+    name: "V0",
+    slug: "v0",
+    url: "https://v0.dev",
+    accentHsl: "0 0% 85%",
+    icon: <V0Icon className="w-6 h-6" />,
+    description: "Ferramenta da Vercel com IA para gerar interfaces e componentes UI rapidamente",
+  },
+  {
+    name: "Midjourney",
+    slug: "midjourney",
+    url: "https://www.midjourney.com",
+    accentHsl: "220 70% 55%",
+    icon: <MidjourneyIcon className="w-6 h-6" />,
+    description: "IA generativa especializada na criação de imagens artísticas de alta qualidade",
+  },
+  {
+    name: "Runway",
+    slug: "runway",
+    url: "https://runwayml.com",
+    accentHsl: "165 75% 50%",
+    icon: <RunwayIcon className="w-6 h-6" />,
+    description: "Plataforma de IA para geração e edição de vídeos com modelos generativos",
+  },
+  {
+    name: "WindSurf",
+    slug: "windsurf",
+    url: "https://codeium.com/windsurf",
+    accentHsl: "200 85% 55%",
+    icon: <WindSurfIcon className="w-6 h-6" />,
+    description: "Editor de código com IA da Codeium para fluxos de desenvolvimento assistido",
+  },
+  {
+    name: "DeepSeek",
+    slug: "deepseek",
+    url: "https://www.deepseek.com",
+    accentHsl: "250 70% 60%",
+    icon: <DeepSeekIcon className="w-6 h-6" />,
+    description: "Modelo de IA avançado para raciocínio, código e análise complexa",
   },
 ];
 
