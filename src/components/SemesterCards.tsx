@@ -12,6 +12,8 @@ export interface SemesterInfo {
   accentHsl: string;
   description: string;
   tag: string;
+  totalSubjects: number;
+  completedSubjects: number;
 }
 
 export const semesters: SemesterInfo[] = [
@@ -24,6 +26,8 @@ export const semesters: SemesterInfo[] = [
     accentHsl: "180 95% 55%",
     description: "Fundamentos, lógica e introdução à engenharia de software.",
     tag: "Primeiro Semestre 2025",
+    totalSubjects: 6,
+    completedSubjects: 6,
   },
   {
     name: "Segundo Semestre 2025",
@@ -34,6 +38,8 @@ export const semesters: SemesterInfo[] = [
     accentHsl: "55 100% 55%",
     description: "Estruturas de dados, paradigmas e modelagem de sistemas.",
     tag: "Segundo Semestre 2025",
+    totalSubjects: 6,
+    completedSubjects: 6,
   },
   {
     name: "Primeiro Semestre 2026",
@@ -44,6 +50,8 @@ export const semesters: SemesterInfo[] = [
     accentHsl: "280 90% 65%",
     description: "Arquitetura, testes, DevOps e práticas avançadas.",
     tag: "Primeiro Semestre 2026",
+    totalSubjects: 6,
+    completedSubjects: 2,
   },
   {
     name: "Segundo Semestre 2026",
@@ -54,6 +62,8 @@ export const semesters: SemesterInfo[] = [
     accentHsl: "320 90% 60%",
     description: "Projeto integrador, segurança e tópicos avançados.",
     tag: "Segundo Semestre 2026",
+    totalSubjects: 6,
+    completedSubjects: 0,
   },
 ];
 
@@ -212,6 +222,57 @@ const SemesterCards = ({ categoryId, searchQuery = "" }: Props) => {
                 <HighlightMatch text={s.description} query={query} />
               </p>
             </div>
+
+            {/* Progress bar */}
+            {(() => {
+              const pct = s.totalSubjects
+                ? Math.round((s.completedSubjects / s.totalSubjects) * 100)
+                : 0;
+              return (
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between font-mono text-[10px] tracking-[0.18em] uppercase">
+                    <span className="text-muted-foreground/70">Progresso</span>
+                    <span style={{ color: `hsl(${s.accentHsl})` }}>
+                      {s.completedSubjects}/{s.totalSubjects} · {pct}%
+                    </span>
+                  </div>
+                  <div
+                    className="relative h-1.5 w-full rounded-full overflow-hidden"
+                    style={{ background: `hsl(${s.accentHsl} / 0.12)` }}
+                  >
+                    <motion.div
+                      className="absolute inset-y-0 left-0 rounded-full"
+                      style={{
+                        background: `linear-gradient(90deg, hsl(${s.accentHsl} / 0.7), hsl(${s.accentHsl}))`,
+                        boxShadow: `0 0 12px hsl(${s.accentHsl} / 0.7)`,
+                      }}
+                      initial={{ width: 0 }}
+                      animate={{ width: `${pct}%` }}
+                      transition={{
+                        duration: 1.2,
+                        delay: 0.2 + i * 0.08,
+                        ease: [0.2, 0, 0, 1],
+                      }}
+                    />
+                    {pct > 0 && pct < 100 && (
+                      <motion.div
+                        className="absolute inset-y-0 w-8 pointer-events-none"
+                        style={{
+                          background: `linear-gradient(90deg, transparent, hsl(${s.accentHsl} / 0.6), transparent)`,
+                        }}
+                        animate={{ x: ["-32px", "100%"] }}
+                        transition={{
+                          duration: 2.2,
+                          repeat: Infinity,
+                          ease: "linear",
+                          delay: 1.2,
+                        }}
+                      />
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Footer CTA bar */}
             <div className="mt-auto flex items-center justify-between pt-3 border-t border-dashed" style={{ borderColor: `hsl(${s.accentHsl} / 0.25)` }}>
