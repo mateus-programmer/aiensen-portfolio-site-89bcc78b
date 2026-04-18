@@ -11,6 +11,7 @@ import PdfUpload from "@/components/PdfUpload";
 import ProgrammingLanguageCards from "@/components/ProgrammingLanguageCards";
 import TheologyTopicCards, { topics as theologyTopics } from "@/components/TheologyTopicCards";
 import AIToolCards from "@/components/AIToolCards";
+import SemesterCards, { semesters } from "@/components/SemesterCards";
 import PdfFileItem from "@/components/PdfFileItem";
 import HighlightMatch from "@/components/HighlightMatch";
 
@@ -74,6 +75,12 @@ const CategoryPage = () => {
         const topicNames = theologyTopics.map((t) => t.name);
         return data.filter(
           (item) => !(item.tags || []).some((tag) => topicNames.includes(tag))
+        );
+      }
+      if (category?.title === "Aulas Engenharia de Software") {
+        const semesterTags = semesters.map((s) => s.tag);
+        return data.filter(
+          (item) => !(item.tags || []).some((tag) => semesterTags.includes(tag))
         );
       }
       return data;
@@ -193,6 +200,20 @@ const CategoryPage = () => {
               Escolha um tópico
             </h2>
             <TheologyTopicCards categoryId={id} searchQuery={search} />
+          </motion.div>
+        )}
+
+        {category.title === "Aulas Engenharia de Software" && id && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="mb-10"
+          >
+            <h2 className="font-display text-lg font-bold text-foreground mb-5">
+              Escolha um semestre
+            </h2>
+            <SemesterCards categoryId={id} searchQuery={search} />
           </motion.div>
         )}
 
@@ -324,7 +345,7 @@ const CategoryPage = () => {
                 );
               }
 
-              if ((category.title === "Cursos de Programação" || category.title === "Vida & Teologia" || category.title === "Ferramentas de IA e Programação") && (!items || items.length === 0)) {
+              if ((category.title === "Cursos de Programação" || category.title === "Vida & Teologia" || category.title === "Ferramentas de IA e Programação" || category.title === "Aulas Engenharia de Software") && (!items || items.length === 0)) {
                 return null;
               }
 

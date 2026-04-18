@@ -10,6 +10,7 @@ import AdminPanel from "./pages/AdminPanel.tsx";
 import CategoryPage from "./pages/CategoryPage.tsx";
 import LanguageSubPage from "./pages/LanguageSubPage.tsx";
 import TheologySubPage from "./pages/TheologySubPage.tsx";
+import SemesterSubPage from "./pages/SemesterSubPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/categoria/:id" element={<CategoryPage />} />
             <Route path="/categoria/:id/linguagem/:slug" element={<LanguageSubPage />} />
             <Route path="/categoria/:id/topico/:slug" element={<TheologySubPage />} />
+            <Route path="/categoria/:id/semestre/:slug" element={<SemesterSubPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
