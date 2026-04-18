@@ -31,6 +31,7 @@ const App = () => (
             <Route path="/categoria/:id/linguagem/:slug" element={<LanguageSubPage />} />
             <Route path="/categoria/:id/topico/:slug" element={<TheologySubPage />} />
             <Route path="/categoria/:id/semestre/:slug" element={<SemesterSubPage />} />
+            <Route path="/categoria/:id/semestre/:slug/materia/:subjectSlug" element={<SubjectSubPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
