@@ -80,6 +80,8 @@ const SemesterSubPage = () => {
           <p className="font-body text-muted-foreground text-sm mt-2">{semester.description}</p>
         </motion.div>
 
+        {id && <SubjectCards categoryId={id} semesterSlug={slug!} />}
+
         {!user && !authLoading ? (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center py-20">
             <Lock size={40} className="mx-auto text-muted-foreground/30 mb-4" />
