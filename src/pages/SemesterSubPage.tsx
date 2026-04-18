@@ -186,9 +186,11 @@ const SemesterSubPage = () => {
                 );
               }
 
-              if (items && items.length > 0 && query) {
+              if (baseItems && baseItems.length > 0 && query) {
                 return <p className="text-center text-muted-foreground font-alt text-sm py-12">Nenhum conteúdo encontrado para "{search}".</p>;
               }
+
+              if (baseItems && baseItems.length === 0) return null;
 
               return (
                 <div className="text-center py-20">
