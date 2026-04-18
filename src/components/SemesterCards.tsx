@@ -12,6 +12,8 @@ export interface SemesterInfo {
   accentHsl: string;
   description: string;
   tag: string;
+  totalSubjects: number;
+  completedSubjects: number;
 }
 
 export const semesters: SemesterInfo[] = [
@@ -24,6 +26,8 @@ export const semesters: SemesterInfo[] = [
     accentHsl: "180 95% 55%",
     description: "Fundamentos, lógica e introdução à engenharia de software.",
     tag: "Primeiro Semestre 2025",
+    totalSubjects: 6,
+    completedSubjects: 6,
   },
   {
     name: "Segundo Semestre 2025",
@@ -34,6 +38,8 @@ export const semesters: SemesterInfo[] = [
     accentHsl: "55 100% 55%",
     description: "Estruturas de dados, paradigmas e modelagem de sistemas.",
     tag: "Segundo Semestre 2025",
+    totalSubjects: 6,
+    completedSubjects: 6,
   },
   {
     name: "Primeiro Semestre 2026",
@@ -44,6 +50,8 @@ export const semesters: SemesterInfo[] = [
     accentHsl: "280 90% 65%",
     description: "Arquitetura, testes, DevOps e práticas avançadas.",
     tag: "Primeiro Semestre 2026",
+    totalSubjects: 6,
+    completedSubjects: 2,
   },
   {
     name: "Segundo Semestre 2026",
@@ -54,6 +62,8 @@ export const semesters: SemesterInfo[] = [
     accentHsl: "320 90% 60%",
     description: "Projeto integrador, segurança e tópicos avançados.",
     tag: "Segundo Semestre 2026",
+    totalSubjects: 6,
+    completedSubjects: 0,
   },
 ];
 
