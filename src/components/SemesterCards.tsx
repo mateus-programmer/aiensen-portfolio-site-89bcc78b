@@ -45,6 +45,16 @@ export const semesters: SemesterInfo[] = [
     description: "Arquitetura, testes, DevOps e práticas avançadas.",
     tag: "Primeiro Semestre 2026",
   },
+  {
+    name: "Segundo Semestre 2026",
+    slug: "2s-2026",
+    code: "ENG-S04.2026",
+    period: "02/2026",
+    status: "agendado",
+    accentHsl: "320 90% 60%",
+    description: "Projeto integrador, segurança e tópicos avançados.",
+    tag: "Segundo Semestre 2026",
+  },
 ];
 
 const statusLabel: Record<SemesterInfo["status"], string> = {
