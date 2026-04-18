@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, FileText, Lock, Cpu } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { semesters } from "@/components/SemesterCards";
+import SubjectCards, { subjectsBySemester } from "@/components/SubjectCards";
 import PdfUpload from "@/components/PdfUpload";
 import PdfFileItem from "@/components/PdfFileItem";
 import type { Tables } from "@/integrations/supabase/types";
