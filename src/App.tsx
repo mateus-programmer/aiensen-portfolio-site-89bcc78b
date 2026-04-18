@@ -11,6 +11,7 @@ import CategoryPage from "./pages/CategoryPage.tsx";
 import LanguageSubPage from "./pages/LanguageSubPage.tsx";
 import TheologySubPage from "./pages/TheologySubPage.tsx";
 import SemesterSubPage from "./pages/SemesterSubPage.tsx";
+import SubjectSubPage from "./pages/SubjectSubPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
