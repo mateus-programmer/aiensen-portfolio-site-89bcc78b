@@ -123,14 +123,22 @@ const SemesterSubPage = () => {
 
             {(() => {
               const query = search.toLowerCase().trim();
-              const filtered = items && query
-                ? items.filter((item) =>
+              const subjectTags = new Set(
+                (subjectsBySemester[slug || ""] || []).map((s) => s.tag)
+              );
+              const baseItems = items
+                ? items.filter(
+                    (item) => !(item.tags || []).some((t) => subjectTags.has(t))
+                  )
+                : items;
+              const filtered = baseItems && query
+                ? baseItems.filter((item) =>
                     item.title.toLowerCase().includes(query) ||
                     (item.description || "").toLowerCase().includes(query) ||
                     (item.content || "").toLowerCase().includes(query) ||
                     (item.tags || []).some((t) => t.toLowerCase().includes(query))
                   )
-                : items;
+                : baseItems;
 
               if (filtered && filtered.length > 0) {
                 return (
