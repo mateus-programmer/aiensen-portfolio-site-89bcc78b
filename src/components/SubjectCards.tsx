@@ -6,6 +6,10 @@ import {
   Network,
   Cloud,
   ShieldCheck,
+  Brain,
+  ClipboardList,
+  Cpu,
+  Terminal,
   ChevronRight,
   type LucideIcon,
 } from "lucide-react";
