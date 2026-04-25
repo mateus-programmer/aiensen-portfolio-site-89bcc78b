@@ -11,6 +11,11 @@ import {
   Cpu,
   Terminal,
   ChevronRight,
+  Users,
+  Globe,
+  Code2,
+  FileCode,
+  Layers,
   type LucideIcon,
 } from "lucide-react";
 
