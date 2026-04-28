@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { KeyRound, ShieldCheck, AlertTriangle } from "lucide-react";
+import { KeyRound, ShieldCheck, AlertTriangle, Mail, Send } from "lucide-react";
 
 const ResetPasswordPage = () => {
   const [password, setPassword] = useState("");
@@ -10,7 +10,18 @@ const ResetPasswordPage = () => {
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);
   const [linkError, setLinkError] = useState<string | null>(null);
+  const [savedEmail, setSavedEmail] = useState<string>("");
+  const [resendEmail, setResendEmail] = useState<string>("");
+  const [resending, setResending] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    try {
+      const e = localStorage.getItem("aiensen:recovery_email") || "";
+      setSavedEmail(e);
+      setResendEmail(e);
+    } catch {}
+  }, []);
 
   useEffect(() => {
     // 1. Detect explicit error in URL hash (expired/invalid recovery link)
@@ -28,8 +39,7 @@ const ResetPasswordPage = () => {
         : "Link de recuperação inválido. Solicite um novo email de redefinição.";
       setLinkError(msg);
       toast.error(msg);
-      const timer = setTimeout(() => navigate("/auth", { replace: true }), 4000);
-      return () => clearTimeout(timer);
+      return;
     }
 
     // 2. Otherwise wait for Supabase to set the recovery session via hash
