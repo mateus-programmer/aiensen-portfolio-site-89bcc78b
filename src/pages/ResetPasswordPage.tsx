@@ -2,17 +2,37 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { KeyRound, ShieldCheck } from "lucide-react";
+import { KeyRound, ShieldCheck, AlertTriangle } from "lucide-react";
 
 const ResetPasswordPage = () => {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);
+  const [linkError, setLinkError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Supabase recovery sets a session via URL hash. Wait for it.
+    // 1. Detect explicit error in URL hash (expired/invalid recovery link)
+    const hash = window.location.hash.startsWith("#")
+      ? window.location.hash.slice(1)
+      : window.location.hash;
+    const hashParams = new URLSearchParams(hash);
+    const errorCode = hashParams.get("error_code") || hashParams.get("error");
+    const errorDescription = hashParams.get("error_description");
+
+    if (errorCode) {
+      const isExpired = errorCode === "otp_expired" || /expired/i.test(errorDescription || "");
+      const msg = isExpired
+        ? "Seu link de recuperação expirou. Solicite um novo email de redefinição."
+        : "Link de recuperação inválido. Solicite um novo email de redefinição.";
+      setLinkError(msg);
+      toast.error(msg);
+      const timer = setTimeout(() => navigate("/auth", { replace: true }), 4000);
+      return () => clearTimeout(timer);
+    }
+
+    // 2. Otherwise wait for Supabase to set the recovery session via hash
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") {
         setReady(true);
@@ -21,8 +41,24 @@ const ResetPasswordPage = () => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) setReady(true);
     });
-    return () => subscription.unsubscribe();
-  }, []);
+
+    // 3. Fallback: if no session and no error after 5s, treat as invalid
+    const fallback = setTimeout(() => {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (!session) {
+          const msg = "Link de recuperação inválido ou expirado. Solicite um novo.";
+          setLinkError(msg);
+          toast.error(msg);
+          setTimeout(() => navigate("/auth", { replace: true }), 3000);
+        }
+      });
+    }, 5000);
+
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(fallback);
+    };
+  }, [navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +74,15 @@ const ResetPasswordPage = () => {
     const { error } = await supabase.auth.updateUser({ password });
     setLoading(false);
     if (error) {
-      toast.error(error.message);
+      const expired = /expired|invalid|jwt|session/i.test(error.message);
+      if (expired) {
+        const msg = "Sua sessão de recuperação expirou. Redirecionando para o login...";
+        setLinkError(msg);
+        toast.error(msg);
+        setTimeout(() => navigate("/auth", { replace: true }), 3000);
+      } else {
+        toast.error(error.message);
+      }
     } else {
       toast.success("Senha redefinida com sucesso!");
       await supabase.auth.signOut();
@@ -46,33 +90,35 @@ const ResetPasswordPage = () => {
     }
   };
 
+  if (linkError) {
+    return (
+      <div className="min-h-screen bg-background bg-grid-pattern flex items-center justify-center px-6">
+        <div className="w-full max-w-md text-center">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl border border-destructive/40 bg-destructive/5 mb-4 shadow-[0_0_30px_hsl(var(--destructive)/0.25)]">
+            <AlertTriangle className="text-destructive" size={26} />
+          </div>
+          <h1 className="font-display text-2xl font-bold tracking-tight mb-3 text-foreground uppercase">
+            Link Inválido
+          </h1>
+          <div className="bg-card border border-destructive/30 rounded-xl p-6 mb-6">
+            <p className="font-alt text-sm text-muted-foreground leading-relaxed">{linkError}</p>
+          </div>
+          <p className="font-alt text-xs text-muted-foreground uppercase tracking-wider animate-pulse">
+            Redirecionando para o login...
+          </p>
+          <button
+            onClick={() => navigate("/auth", { replace: true })}
+            className="mt-4 font-alt text-xs text-primary hover:underline uppercase tracking-wider"
+          >
+            Ir agora →
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background bg-grid-pattern flex items-center justify-center px-6">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl border border-primary/40 bg-primary/5 mb-4 shadow-[0_0_30px_hsl(48_100%_50%/0.25)]">
-            <ShieldCheck className="text-primary" size={26} />
-          </div>
-          <h1 className="font-display text-3xl font-bold tracking-tight mb-2">
-            <span className="neon-text-yellow">REDEFINIR</span>
-            <span className="text-foreground"> SENHA</span>
-          </h1>
-          <p className="font-alt text-sm text-muted-foreground uppercase tracking-wider">
-            // Defina uma nova credencial de acesso
-          </p>
-        </div>
-
-        <form
-          onSubmit={handleSubmit}
-          className="relative bg-card border border-border rounded-xl p-8 space-y-5 overflow-hidden"
-        >
-          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
-
-          {!ready && (
-            <p className="font-alt text-xs text-muted-foreground text-center uppercase tracking-wider">
-              Validando link de recuperação...
-            </p>
-          )}
 
           <div>
             <label className="block font-alt text-xs text-muted-foreground mb-1.5 uppercase tracking-wider">
