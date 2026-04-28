@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { KeyRound, ShieldCheck, AlertTriangle, Mail, Send } from "lucide-react";
+import { KeyRound, ShieldCheck, AlertTriangle, Mail, Send, Timer } from "lucide-react";
+
+const COOLDOWN_SECONDS = 60;
+const COOLDOWN_KEY = "aiensen:recovery_cooldown_until";
 
 const ResetPasswordPage = () => {
   const [password, setPassword] = useState("");
@@ -13,6 +16,7 @@ const ResetPasswordPage = () => {
   const [savedEmail, setSavedEmail] = useState<string>("");
   const [resendEmail, setResendEmail] = useState<string>("");
   const [resending, setResending] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,8 +24,25 @@ const ResetPasswordPage = () => {
       const e = localStorage.getItem("aiensen:recovery_email") || "";
       setSavedEmail(e);
       setResendEmail(e);
+      const until = parseInt(localStorage.getItem(COOLDOWN_KEY) || "0", 10);
+      const remaining = Math.max(0, Math.ceil((until - Date.now()) / 1000));
+      if (remaining > 0) setCooldown(remaining);
     } catch {}
   }, []);
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const id = setInterval(() => {
+      setCooldown((c) => {
+        if (c <= 1) {
+          clearInterval(id);
+          return 0;
+        }
+        return c - 1;
+      });
+    }, 1000);
+    return () => clearInterval(id);
+  }, [cooldown]);
 
   useEffect(() => {
     // 1. Detect explicit error in URL hash (expired/invalid recovery link)
