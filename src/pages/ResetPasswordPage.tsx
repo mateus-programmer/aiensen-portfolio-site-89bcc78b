@@ -121,6 +121,10 @@ const ResetPasswordPage = () => {
 
   const handleResend = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (cooldown > 0) {
+      toast.error(`Aguarde ${cooldown}s antes de solicitar novamente.`);
+      return;
+    }
     if (!resendEmail || !/^\S+@\S+\.\S+$/.test(resendEmail)) {
       toast.error("Informe um email válido.");
       return;
@@ -131,10 +135,25 @@ const ResetPasswordPage = () => {
     });
     setResending(false);
     if (error) {
-      toast.error(error.message);
+      // Supabase rate-limit message handling
+      const match = /(\d+)\s*second/i.exec(error.message);
+      if (match) {
+        const secs = parseInt(match[1], 10);
+        const until = Date.now() + secs * 1000;
+        try { localStorage.setItem(COOLDOWN_KEY, String(until)); } catch {}
+        setCooldown(secs);
+        toast.error(`Muitas tentativas. Tente novamente em ${secs}s.`);
+      } else {
+        toast.error(error.message);
+      }
       return;
     }
-    try { localStorage.setItem("aiensen:recovery_email", resendEmail); } catch {}
+    try {
+      localStorage.setItem("aiensen:recovery_email", resendEmail);
+      const until = Date.now() + COOLDOWN_SECONDS * 1000;
+      localStorage.setItem(COOLDOWN_KEY, String(until));
+    } catch {}
+    setCooldown(COOLDOWN_SECONDS);
     toast.success("Novo link enviado! Verifique seu email.");
     setTimeout(() => navigate("/auth", { replace: true }), 1500);
   };
@@ -183,13 +202,27 @@ const ResetPasswordPage = () => {
               )}
             </div>
 
+            {cooldown > 0 && (
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-primary/30 bg-primary/5">
+                <Timer size={14} className="text-primary animate-pulse shrink-0" />
+                <p className="font-alt text-[11px] text-muted-foreground uppercase tracking-wider">
+                  Aguarde <span className="text-primary font-semibold">{cooldown}s</span> para reenviar novamente
+                </p>
+              </div>
+            )}
+
             <button
               type="submit"
-              disabled={resending}
-              className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground font-display text-sm font-semibold tracking-wider uppercase py-3 rounded-lg transition-all hover:shadow-[0_0_30px_hsl(48_100%_50%/0.4)] disabled:opacity-50 active:scale-[0.98]"
+              disabled={resending || cooldown > 0}
+              className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground font-display text-sm font-semibold tracking-wider uppercase py-3 rounded-lg transition-all hover:shadow-[0_0_30px_hsl(48_100%_50%/0.4)] disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
             >
-              {resending ? <Mail size={16} className="animate-pulse" /> : <Send size={16} />}
-              {resending ? "Enviando..." : "Reenviar link de recuperação"}
+              {cooldown > 0 ? (
+                <><Timer size={16} /> Aguarde {cooldown}s</>
+              ) : resending ? (
+                <><Mail size={16} className="animate-pulse" /> Enviando...</>
+              ) : (
+                <><Send size={16} /> Reenviar link de recuperação</>
+              )}
             </button>
 
             <button
