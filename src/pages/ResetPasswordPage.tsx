@@ -119,6 +119,31 @@ const ResetPasswordPage = () => {
 
   return (
     <div className="min-h-screen bg-background bg-grid-pattern flex items-center justify-center px-6">
+      <div className="w-full max-w-md">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl border border-primary/40 bg-primary/5 mb-4 shadow-[0_0_30px_hsl(48_100%_50%/0.25)]">
+            <ShieldCheck className="text-primary" size={26} />
+          </div>
+          <h1 className="font-display text-3xl font-bold tracking-tight mb-2">
+            <span className="neon-text-yellow">REDEFINIR</span>
+            <span className="text-foreground"> SENHA</span>
+          </h1>
+          <p className="font-alt text-sm text-muted-foreground uppercase tracking-wider">
+            // Defina uma nova credencial de acesso
+          </p>
+        </div>
+
+        <form
+          onSubmit={handleSubmit}
+          className="relative bg-card border border-border rounded-xl p-8 space-y-5 overflow-hidden"
+        >
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
+
+          {!ready && (
+            <p className="font-alt text-xs text-muted-foreground text-center uppercase tracking-wider">
+              Validando link de recuperação...
+            </p>
+          )}
 
           <div>
             <label className="block font-alt text-xs text-muted-foreground mb-1.5 uppercase tracking-wider">
