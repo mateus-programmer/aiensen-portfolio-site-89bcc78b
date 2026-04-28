@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { KeyRound, ShieldCheck, AlertTriangle } from "lucide-react";
+import { KeyRound, ShieldCheck, AlertTriangle, Mail, Send } from "lucide-react";
 
 const ResetPasswordPage = () => {
   const [password, setPassword] = useState("");
@@ -10,7 +10,18 @@ const ResetPasswordPage = () => {
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);
   const [linkError, setLinkError] = useState<string | null>(null);
+  const [savedEmail, setSavedEmail] = useState<string>("");
+  const [resendEmail, setResendEmail] = useState<string>("");
+  const [resending, setResending] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    try {
+      const e = localStorage.getItem("aiensen:recovery_email") || "";
+      setSavedEmail(e);
+      setResendEmail(e);
+    } catch {}
+  }, []);
 
   useEffect(() => {
     // 1. Detect explicit error in URL hash (expired/invalid recovery link)
@@ -28,8 +39,7 @@ const ResetPasswordPage = () => {
         : "Link de recuperação inválido. Solicite um novo email de redefinição.";
       setLinkError(msg);
       toast.error(msg);
-      const timer = setTimeout(() => navigate("/auth", { replace: true }), 4000);
-      return () => clearTimeout(timer);
+      return;
     }
 
     // 2. Otherwise wait for Supabase to set the recovery session via hash
@@ -49,7 +59,6 @@ const ResetPasswordPage = () => {
           const msg = "Link de recuperação inválido ou expirado. Solicite um novo.";
           setLinkError(msg);
           toast.error(msg);
-          setTimeout(() => navigate("/auth", { replace: true }), 3000);
         }
       });
     }, 5000);
@@ -76,10 +85,9 @@ const ResetPasswordPage = () => {
     if (error) {
       const expired = /expired|invalid|jwt|session/i.test(error.message);
       if (expired) {
-        const msg = "Sua sessão de recuperação expirou. Redirecionando para o login...";
+        const msg = "Sua sessão de recuperação expirou. Solicite um novo link abaixo.";
         setLinkError(msg);
         toast.error(msg);
-        setTimeout(() => navigate("/auth", { replace: true }), 3000);
       } else {
         toast.error(error.message);
       }
@@ -90,28 +98,87 @@ const ResetPasswordPage = () => {
     }
   };
 
+  const handleResend = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resendEmail || !/^\S+@\S+\.\S+$/.test(resendEmail)) {
+      toast.error("Informe um email válido.");
+      return;
+    }
+    setResending(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(resendEmail, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setResending(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    try { localStorage.setItem("aiensen:recovery_email", resendEmail); } catch {}
+    toast.success("Novo link enviado! Verifique seu email.");
+    setTimeout(() => navigate("/auth", { replace: true }), 1500);
+  };
+
   if (linkError) {
     return (
       <div className="min-h-screen bg-background bg-grid-pattern flex items-center justify-center px-6">
-        <div className="w-full max-w-md text-center">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl border border-destructive/40 bg-destructive/5 mb-4 shadow-[0_0_30px_hsl(var(--destructive)/0.25)]">
-            <AlertTriangle className="text-destructive" size={26} />
+        <div className="w-full max-w-md">
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl border border-destructive/40 bg-destructive/5 mb-4 shadow-[0_0_30px_hsl(var(--destructive)/0.25)]">
+              <AlertTriangle className="text-destructive" size={26} />
+            </div>
+            <h1 className="font-display text-2xl font-bold tracking-tight mb-3 text-foreground uppercase">
+              Link Inválido
+            </h1>
           </div>
-          <h1 className="font-display text-2xl font-bold tracking-tight mb-3 text-foreground uppercase">
-            Link Inválido
-          </h1>
-          <div className="bg-card border border-destructive/30 rounded-xl p-6 mb-6">
-            <p className="font-alt text-sm text-muted-foreground leading-relaxed">{linkError}</p>
+
+          <div className="bg-card border border-destructive/30 rounded-xl p-6 mb-4">
+            <p className="font-alt text-sm text-muted-foreground leading-relaxed text-center">
+              {linkError}
+            </p>
           </div>
-          <p className="font-alt text-xs text-muted-foreground uppercase tracking-wider animate-pulse">
-            Redirecionando para o login...
-          </p>
-          <button
-            onClick={() => navigate("/auth", { replace: true })}
-            className="mt-4 font-alt text-xs text-primary hover:underline uppercase tracking-wider"
+
+          <form
+            onSubmit={handleResend}
+            className="relative bg-card border border-border rounded-xl p-6 space-y-4 overflow-hidden"
           >
-            Ir agora →
-          </button>
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
+
+            <div>
+              <label className="block font-alt text-xs text-muted-foreground mb-1.5 uppercase tracking-wider">
+                Email para reenvio
+              </label>
+              <input
+                type="email"
+                required
+                value={resendEmail}
+                onChange={(e) => setResendEmail(e.target.value)}
+                className="w-full bg-secondary border border-border rounded-lg px-4 py-2.5 text-foreground font-body text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                placeholder="seu@email.com"
+              />
+              {savedEmail && (
+                <p className="mt-1.5 font-alt text-[10px] text-muted-foreground/70 uppercase tracking-wider">
+                  // Email da última solicitação preenchido automaticamente
+                </p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              disabled={resending}
+              className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground font-display text-sm font-semibold tracking-wider uppercase py-3 rounded-lg transition-all hover:shadow-[0_0_30px_hsl(48_100%_50%/0.4)] disabled:opacity-50 active:scale-[0.98]"
+            >
+              {resending ? <Mail size={16} className="animate-pulse" /> : <Send size={16} />}
+              {resending ? "Enviando..." : "Reenviar link de recuperação"}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => navigate("/auth", { replace: true })}
+              className="w-full font-alt text-xs text-muted-foreground hover:text-foreground transition-colors uppercase tracking-wider"
+            >
+              ← Voltar ao login
+            </button>
+          </form>
         </div>
       </div>
     );

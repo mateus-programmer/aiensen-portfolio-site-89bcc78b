@@ -40,6 +40,7 @@ const AuthPage = () => {
       });
       if (error) toast.error(error.message);
       else {
+        try { localStorage.setItem("aiensen:recovery_email", email); } catch {}
         toast.success("Enviamos um link de recuperação para seu email.");
         setMode("login");
       }
