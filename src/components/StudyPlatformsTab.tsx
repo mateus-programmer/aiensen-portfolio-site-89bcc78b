@@ -164,7 +164,7 @@ const StudyPlatformsTab = () => {
                   background: `linear-gradient(90deg, hsl(${accentHsl}), hsl(${accentHsl} / 0.2))`,
                 }}
               />
-            </motion.a>
+            </motion.div>
           </div>
         </TabsContent>
       </Tabs>
