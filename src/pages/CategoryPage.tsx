@@ -187,6 +187,7 @@ const CategoryPage = () => {
               Escolha uma linguagem
             </h2>
             <ProgrammingLanguageCards categoryId={id} searchQuery={search} />
+            <StudyPlatformsTab />
           </motion.div>
         )}
 
