@@ -12,6 +12,7 @@ import ProgrammingLanguageCards from "@/components/ProgrammingLanguageCards";
 import TheologyTopicCards, { topics as theologyTopics } from "@/components/TheologyTopicCards";
 import AIToolCards from "@/components/AIToolCards";
 import SemesterCards, { semesters } from "@/components/SemesterCards";
+import StudyPlatformsTab from "@/components/StudyPlatformsTab";
 import PdfFileItem from "@/components/PdfFileItem";
 import HighlightMatch from "@/components/HighlightMatch";
 
@@ -186,6 +187,7 @@ const CategoryPage = () => {
               Escolha uma linguagem
             </h2>
             <ProgrammingLanguageCards categoryId={id} searchQuery={search} />
+            <StudyPlatformsTab />
           </motion.div>
         )}
 
