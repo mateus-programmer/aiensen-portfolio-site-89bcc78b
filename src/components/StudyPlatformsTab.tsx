@@ -52,13 +52,11 @@ const StudyPlatformsTab = () => {
 
         <TabsContent value="plataformas" className="mt-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <motion.a
-              href="#"
-              onClick={(e) => e.preventDefault()}
+            <motion.div
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, ease: [0.2, 0, 0, 1] }}
-              className="group relative rounded-xl overflow-hidden cursor-pointer block"
+              className="group relative rounded-xl overflow-hidden cursor-pointer"
               style={{
                 background: `linear-gradient(160deg, hsl(${accentHsl} / 0.10) 0%, hsl(var(--card)) 55%, hsl(var(--card)) 100%)`,
                 border: `1px solid hsl(${accentHsl} / 0.25)`,
