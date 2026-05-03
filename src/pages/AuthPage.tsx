@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { KeyRound, Mail, ArrowLeft, Zap } from "lucide-react";
+import { KeyRound, Mail, ArrowLeft, Zap, Eye, EyeOff } from "lucide-react";
 
 type Mode = "login" | "signup" | "forgot";
 
