@@ -187,6 +187,17 @@ const AuthPage = () => {
                       {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
                   </div>
+                  {password.length > 0 && password.length < 6 && (
+                    <p className="font-alt text-[11px] text-yellow-400/80 mt-1.5 flex items-center gap-1">
+                      <Zap size={10} className="shrink-0" />
+                      A senha deve ter no mínimo 6 caracteres ({password.length}/6)
+                    </p>
+                  )}
+                  {password.length >= 6 && (
+                    <p className="font-alt text-[11px] text-emerald-400/80 mt-1.5 flex items-center gap-1">
+                      ✓ Senha válida
+                    </p>
+                  )}
                 </div>
 
                 <button
