@@ -186,8 +186,8 @@ const SubjectSubPage = () => {
             {(() => {
               const query = search.toLowerCase().trim();
               const filtered =
-                items && query
-                  ? items.filter(
+                visibleItems && query
+                  ? visibleItems.filter(
                       (item) =>
                         item.title.toLowerCase().includes(query) ||
                         (item.description || "").toLowerCase().includes(query) ||
@@ -196,7 +196,7 @@ const SubjectSubPage = () => {
                           t.toLowerCase().includes(query)
                         )
                     )
-                  : items;
+                  : visibleItems;
 
               if (filtered && filtered.length > 0) {
                 return (
