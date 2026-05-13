@@ -139,9 +139,17 @@ const SemesterSubPage = () => {
               const subjectTags = new Set(
                 (subjectsBySemester[slug || ""] || []).map((s) => s.tag)
               );
+              const folderTags = new Set<string>();
+              (foldersBySemester[slug || ""] || []).forEach((f) => {
+                folderTags.add(f.tag);
+                f.subfolders.forEach((sf) => folderTags.add(sf.tag));
+              });
               const baseItems = items
                 ? items.filter(
-                    (item) => !(item.tags || []).some((t) => subjectTags.has(t))
+                    (item) =>
+                      !(item.tags || []).some(
+                        (t) => subjectTags.has(t) || folderTags.has(t)
+                      )
                   )
                 : items;
               const filtered = baseItems && query
