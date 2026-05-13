@@ -107,6 +107,19 @@ const SubjectSubPage = () => {
           </p>
         </motion.div>
 
+        {folders.length > 0 && (
+          <FolderCards
+            heading="directories.matrix"
+            variant="folder"
+            items={folders}
+            onOpen={(f) =>
+              navigate(
+                `/categoria/${id}/semestre/${slug}/materia/${subjectSlug}/pasta/${f}`
+              )
+            }
+          />
+        )}
+
         {!user && !authLoading ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
