@@ -264,7 +264,7 @@ const SubjectSubPage = () => {
                 );
               }
 
-              if (items && items.length > 0 && query) {
+              if (visibleItems && visibleItems.length > 0 && query) {
                 return (
                   <p className="text-center text-muted-foreground font-alt text-sm py-12">
                     Nenhum conteúdo encontrado para "{search}".
