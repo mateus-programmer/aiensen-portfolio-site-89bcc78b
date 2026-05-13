@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
-import { ArrowLeft, FileText, Lock } from "lucide-react";
+import { ArrowLeft, FileText, Lock, FolderOpen, Folder } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { semesters } from "@/components/SemesterCards";
 import { subjectsBySemester } from "@/components/SubjectCards";
@@ -15,12 +15,14 @@ import type { Tables } from "@/integrations/supabase/types";
 
 type ContentItem = Tables<"content_items">;
 
-const SubjectSubPage = () => {
+const SubjectFolderSubPage = () => {
   const [search, setSearch] = useState("");
-  const { id, slug, subjectSlug } = useParams<{
+  const { id, slug, subjectSlug, folderSlug, subSlug } = useParams<{
     id: string;
     slug: string;
     subjectSlug: string;
+    folderSlug: string;
+    subSlug?: string;
   }>();
   const navigate = useNavigate();
   const { user, isAdmin, loading: authLoading } = useAuth();
@@ -30,29 +32,53 @@ const SubjectSubPage = () => {
   const subject = (subjectsBySemester[slug || ""] || []).find(
     (s) => s.slug === subjectSlug
   );
+  const folders = foldersBySubject[`${slug}/${subjectSlug}`] || [];
+  const folder = folders.find((f) => f.slug === folderSlug);
+  const subfolder = subSlug
+    ? folder?.subfolders.find((sf) => sf.slug === subSlug)
+    : undefined;
+
+  const activeTag = subfolder?.tag || folder?.tag || "";
+  const accentHsl = subfolder?.accentHsl || folder?.accentHsl || "190 95% 60%";
+  const accent = `hsl(${accentHsl})`;
+  const Icon = subfolder ? Folder : FolderOpen;
+  const title = subfolder?.name || folder?.name || "";
+  const code = subfolder?.code || folder?.code || "";
+  const description = subfolder?.description || folder?.description || "";
+
+  const queryKey = [
+    "content_items",
+    id,
+    "materia",
+    subjectSlug,
+    "pasta",
+    folderSlug,
+    subSlug || "_root",
+    user?.id,
+  ];
 
   const { data: items } = useQuery({
-    queryKey: ["content_items", id, "materia", subjectSlug, user?.id],
+    queryKey,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("content_items")
         .select("*")
         .eq("category_id", id!)
         .eq("is_active", true)
-        .contains("tags", [subject?.tag || ""])
+        .contains("tags", [activeTag])
         .order("sort_order", { ascending: true });
       if (error) throw error;
       return data as ContentItem[];
     },
-    enabled: !!id && !!user && !!subject,
+    enabled: !!id && !!user && !!activeTag,
   });
 
-  if (!semester || !subject) {
+  if (!semester || !subject || !folder || (subSlug && !subfolder)) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
-        <p className="text-muted-foreground font-alt">Matéria não encontrada.</p>
+        <p className="text-muted-foreground font-alt">Pasta não encontrada.</p>
         <button
-          onClick={() => navigate(`/categoria/${id}/semestre/${slug}`)}
+          onClick={() => navigate(`/categoria/${id}/semestre/${slug}/materia/${subjectSlug}`)}
           className="text-primary font-display text-sm hover:underline"
         >
           Voltar
@@ -61,31 +87,32 @@ const SubjectSubPage = () => {
     );
   }
 
-  const accent = `hsl(${subject.accentHsl})`;
-  const Icon = subject.icon;
-  const folders = foldersBySubject[`${slug}/${subjectSlug}`] || [];
-  const folderTags = new Set<string>();
-  folders.forEach((f) => {
-    folderTags.add(f.tag);
-    f.subfolders.forEach((sf) => folderTags.add(sf.tag));
-  });
-  const visibleItems = items?.filter(
-    (it) => !(it.tags || []).some((t) => folderTags.has(t))
-  );
+  const backTo = subfolder
+    ? `/categoria/${id}/semestre/${slug}/materia/${subjectSlug}/pasta/${folderSlug}`
+    : `/categoria/${id}/semestre/${slug}/materia/${subjectSlug}`;
+
+  const subTags = new Set(folder.subfolders.map((sf) => sf.tag));
+  const visibleItems = subfolder
+    ? items
+    : items?.filter((it) => !(it.tags || []).some((t) => subTags.has(t)));
+
+  const uploadTags = subfolder
+    ? [semester.tag, subject.tag, folder.tag, subfolder.tag]
+    : [semester.tag, subject.tag, folder.tag];
 
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-card/80 backdrop-blur-md sticky top-0 z-30">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center gap-4">
           <button
-            onClick={() => navigate(`/categoria/${id}/semestre/${slug}`)}
+            onClick={() => navigate(backTo)}
             className="p-2 text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft size={20} />
           </button>
           <Icon size={18} style={{ color: accent }} />
           <h1 className="font-display text-lg font-bold" style={{ color: accent }}>
-            {subject.name}
+            {title}
           </h1>
         </div>
       </header>
@@ -100,21 +127,22 @@ const SubjectSubPage = () => {
             className="font-mono text-[10px] tracking-[0.2em] uppercase"
             style={{ color: accent }}
           >
-            {subject.code} · {semester.name}
+            {code} · {subject.name}
+            {subfolder && ` · ${folder.name}`}
           </span>
           <p className="font-body text-muted-foreground text-sm mt-2">
-            {subject.description}
+            {description}
           </p>
         </motion.div>
 
-        {folders.length > 0 && (
+        {!subfolder && folder.subfolders.length > 0 && (
           <FolderCards
-            heading="directories.matrix"
-            variant="folder"
-            items={folders}
-            onOpen={(f) =>
+            heading="subdirectories.matrix"
+            variant="subfolder"
+            items={folder.subfolders}
+            onOpen={(sub) =>
               navigate(
-                `/categoria/${id}/semestre/${slug}/materia/${subjectSlug}/pasta/${f}`
+                `/categoria/${id}/semestre/${slug}/materia/${subjectSlug}/pasta/${folderSlug}/sub/${sub}`
               )
             }
           />
@@ -134,7 +162,9 @@ const SubjectSubPage = () => {
               onClick={() =>
                 navigate(
                   `/auth?redirect=${encodeURIComponent(
-                    `/categoria/${id}/semestre/${slug}/materia/${subjectSlug}`
+                    `/categoria/${id}/semestre/${slug}/materia/${subjectSlug}/pasta/${folderSlug}${
+                      subSlug ? `/sub/${subSlug}` : ""
+                    }`
                   )}`
                 )
               }
@@ -148,11 +178,9 @@ const SubjectSubPage = () => {
             {isAdmin && id && (
               <PdfUpload
                 categoryId={id}
-                defaultTags={[semester.tag, subject.tag]}
+                defaultTags={uploadTags}
                 onUploadComplete={() =>
-                  queryClient.invalidateQueries({
-                    queryKey: ["content_items", id, "materia", subjectSlug],
-                  })
+                  queryClient.invalidateQueries({ queryKey })
                 }
               />
             )}
@@ -177,7 +205,7 @@ const SubjectSubPage = () => {
                   type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  placeholder={`Buscar em ${subject.name}...`}
+                  placeholder={`Buscar em ${title}...`}
                   className="w-full bg-secondary border border-border rounded-lg pl-11 pr-4 py-2.5 text-foreground font-body text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
                 />
               </div>
@@ -213,14 +241,7 @@ const SubjectSubPage = () => {
                             index={i}
                             isAdmin={isAdmin}
                             onDeleted={() =>
-                              queryClient.invalidateQueries({
-                                queryKey: [
-                                  "content_items",
-                                  id,
-                                  "materia",
-                                  subjectSlug,
-                                ],
-                              })
+                              queryClient.invalidateQueries({ queryKey })
                             }
                           />
                         );
@@ -235,10 +256,7 @@ const SubjectSubPage = () => {
                           style={{ borderLeftColor: accent }}
                         >
                           <div className="flex items-start gap-4">
-                            <FileText
-                              size={18}
-                              className="mt-0.5 text-muted-foreground"
-                            />
+                            <FileText size={18} className="mt-0.5 text-muted-foreground" />
                             <div className="flex-1 min-w-0">
                               <h3 className="font-display text-sm font-semibold text-foreground mb-1">
                                 {item.title}
@@ -272,14 +290,13 @@ const SubjectSubPage = () => {
                 );
               }
 
+              if (!subfolder && folder.subfolders.length > 0) return null;
+
               return (
                 <div className="text-center py-20">
-                  <FileText
-                    size={40}
-                    className="mx-auto text-muted-foreground/30 mb-4"
-                  />
+                  <FileText size={40} className="mx-auto text-muted-foreground/30 mb-4" />
                   <p className="font-alt text-muted-foreground text-sm">
-                    Nenhum conteúdo disponível para {subject.name} ainda.
+                    Nenhum conteúdo disponível em {title} ainda.
                   </p>
                 </div>
               );
@@ -291,4 +308,4 @@ const SubjectSubPage = () => {
   );
 };
 
-export default SubjectSubPage;
+export default SubjectFolderSubPage;
