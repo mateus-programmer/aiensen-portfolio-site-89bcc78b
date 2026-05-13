@@ -7,6 +7,8 @@ import { ArrowLeft, FileText, Lock } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { semesters } from "@/components/SemesterCards";
 import { subjectsBySemester } from "@/components/SubjectCards";
+import { foldersBySubject } from "@/data/subjectFolders";
+import FolderCards from "@/components/FolderCards";
 import PdfUpload from "@/components/PdfUpload";
 import PdfFileItem from "@/components/PdfFileItem";
 import type { Tables } from "@/integrations/supabase/types";
