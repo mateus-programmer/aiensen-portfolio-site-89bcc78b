@@ -7,6 +7,8 @@ import { ArrowLeft, FileText, Lock, Cpu } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { semesters } from "@/components/SemesterCards";
 import SubjectCards, { subjectsBySemester } from "@/components/SubjectCards";
+import FolderCards from "@/components/FolderCards";
+import { foldersBySemester } from "@/data/semesterFolders";
 import PdfUpload from "@/components/PdfUpload";
 import PdfFileItem from "@/components/PdfFileItem";
 import type { Tables } from "@/integrations/supabase/types";
@@ -82,6 +84,17 @@ const SemesterSubPage = () => {
 
         {id && <SubjectCards categoryId={id} semesterSlug={slug!} />}
 
+        {id && (foldersBySemester[slug || ""] || []).length > 0 && (
+          <FolderCards
+            heading="folders.matrix"
+            variant="folder"
+            items={foldersBySemester[slug || ""]}
+            onOpen={(folderSlug) =>
+              navigate(`/categoria/${id}/semestre/${slug}/pasta/${folderSlug}`)
+            }
+          />
+        )}
+
         {!user && !authLoading ? (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center py-20">
             <Lock size={40} className="mx-auto text-muted-foreground/30 mb-4" />
@@ -126,9 +139,17 @@ const SemesterSubPage = () => {
               const subjectTags = new Set(
                 (subjectsBySemester[slug || ""] || []).map((s) => s.tag)
               );
+              const folderTags = new Set<string>();
+              (foldersBySemester[slug || ""] || []).forEach((f) => {
+                folderTags.add(f.tag);
+                f.subfolders.forEach((sf) => folderTags.add(sf.tag));
+              });
               const baseItems = items
                 ? items.filter(
-                    (item) => !(item.tags || []).some((t) => subjectTags.has(t))
+                    (item) =>
+                      !(item.tags || []).some(
+                        (t) => subjectTags.has(t) || folderTags.has(t)
+                      )
                   )
                 : items;
               const filtered = baseItems && query
