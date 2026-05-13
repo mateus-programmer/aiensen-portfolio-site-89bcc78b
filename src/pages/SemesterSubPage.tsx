@@ -84,6 +84,17 @@ const SemesterSubPage = () => {
 
         {id && <SubjectCards categoryId={id} semesterSlug={slug!} />}
 
+        {id && (foldersBySemester[slug || ""] || []).length > 0 && (
+          <FolderCards
+            heading="folders.matrix"
+            variant="folder"
+            items={foldersBySemester[slug || ""]}
+            onOpen={(folderSlug) =>
+              navigate(`/categoria/${id}/semestre/${slug}/pasta/${folderSlug}`)
+            }
+          />
+        )}
+
         {!user && !authLoading ? (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center py-20">
             <Lock size={40} className="mx-auto text-muted-foreground/30 mb-4" />
