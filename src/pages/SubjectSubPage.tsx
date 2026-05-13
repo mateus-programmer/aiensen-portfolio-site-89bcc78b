@@ -63,6 +63,15 @@ const SubjectSubPage = () => {
 
   const accent = `hsl(${subject.accentHsl})`;
   const Icon = subject.icon;
+  const folders = foldersBySubject[`${slug}/${subjectSlug}`] || [];
+  const folderTags = new Set<string>();
+  folders.forEach((f) => {
+    folderTags.add(f.tag);
+    f.subfolders.forEach((sf) => folderTags.add(sf.tag));
+  });
+  const visibleItems = items?.filter(
+    (it) => !(it.tags || []).some((t) => folderTags.has(t))
+  );
 
   return (
     <div className="min-h-screen bg-background">
