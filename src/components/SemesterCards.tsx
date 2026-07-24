@@ -50,8 +50,8 @@ export const semesters: SemesterInfo[] = [
     accentHsl: "280 90% 65%",
     description: "Arquitetura, testes, DevOps e práticas avançadas.",
     tag: "Primeiro Semestre 2026",
-    totalSubjects: 6,
-    completedSubjects: 2,
+    totalSubjects: 5,
+    completedSubjects: 1,
   },
   {
     name: "Segundo Semestre 2026",
