@@ -1,7 +1,11 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Cpu, ChevronRight } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import HighlightMatch from "@/components/HighlightMatch";
+import { supabase } from "@/integrations/supabase/client";
+import { subjectsBySemester } from "@/components/SubjectCards";
+
 
 export interface SemesterInfo {
   name: string;
@@ -81,14 +85,54 @@ interface Props {
 const SemesterCards = ({ categoryId, searchQuery = "" }: Props) => {
   const navigate = useNavigate();
   const query = searchQuery.toLowerCase().trim();
+
+  // Fetch content items in this category to compute progress from attached PDFs
+  const { data: items = [] } = useQuery({
+    queryKey: ["semester-progress-items", categoryId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("content_items")
+        .select("tags,file_url")
+        .eq("category_id", categoryId)
+        .eq("is_active", true);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  // Compute completed subjects per semester (a subject counts as completed
+  // when at least one active content item with a file_url has its tag)
+  const computed = semesters.map((s) => {
+    const subjects = subjectsBySemester[s.slug] ?? [];
+    const total = subjects.length || s.totalSubjects;
+    const detected = subjects.filter((sub) =>
+      items.some(
+        (it: { tags: string[] | null; file_url: string | null }) =>
+          !!it.file_url && Array.isArray(it.tags) && it.tags.includes(sub.tag)
+      )
+    ).length;
+    // Respect manual baseline in config; auto-progress only raises the count.
+    const completed = Math.max(s.completedSubjects, detected);
+    const status: SemesterInfo["status"] =
+      s.status === "agendado"
+        ? "agendado"
+        : total > 0 && completed >= total
+        ? "concluido"
+        : completed > 0
+        ? "em-andamento"
+        : s.status;
+    return { ...s, totalSubjects: total, completedSubjects: completed, status };
+  });
+
   const filtered = query
-    ? semesters.filter(
+    ? computed.filter(
         (s) =>
           s.name.toLowerCase().includes(query) ||
           s.code.toLowerCase().includes(query) ||
           s.description.toLowerCase().includes(query)
       )
-    : semesters;
+    : computed;
+
 
   if (filtered.length === 0) {
     return (
