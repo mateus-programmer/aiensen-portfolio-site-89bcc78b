@@ -20,10 +20,11 @@ O AIensen funciona como um hub central de conteúdos criados por mim e com auxí
   - Programação (linguagens de programação)
   - Teologia (tópicos doutrinários)
   - Ferramentas de IA
-- **Painel Admin** protegido por autenticação, com gerenciamento de categorias e itens de conteúdo
+- **Painel Admin** protegido por autenticação e papel de administrador (`user_roles`)
 - **Upload de PDFs** com tagueamento automático contextual
-- **Autenticação** por email/senha com redirect pós-login
+- **Autenticação** por email/senha com redirect pós-login e recuperação de senha
 - **Design responsivo** e animações com Framer Motion
+- **Segurança reforçada** com RLS, bucket privado, URLs assinadas e proteção de senhas vazadas (HIBP)
 
 ---
 
