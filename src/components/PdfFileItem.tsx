@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FileText, Download, Trash2, ExternalLink, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -20,15 +20,39 @@ const accentBorder: Record<string, string> = {
   purple: "border-l-neon-purple",
 };
 
+const extractStoragePath = (fileUrl: string): string | null => {
+  const parts = fileUrl.split("/category-files/");
+  return parts[1] ? decodeURIComponent(parts[1]) : null;
+};
+
 const PdfFileItem = ({ id, title, fileUrl, neonColor, index, isAdmin, onDeleted }: PdfFileItemProps) => {
   const [showViewer, setShowViewer] = useState(false);
+  const [signedUrl, setSignedUrl] = useState<string | null>(null);
+
+  const storagePath = extractStoragePath(fileUrl);
+
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      if (!storagePath) return;
+      const { data, error } = await supabase.storage
+        .from("category-files")
+        .createSignedUrl(storagePath, 60 * 60);
+      if (!cancelled && !error && data?.signedUrl) {
+        setSignedUrl(data.signedUrl);
+      }
+    };
+    load();
+    const interval = setInterval(load, 50 * 60 * 1000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [storagePath]);
 
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!confirm(`Excluir "${title}"?`)) return;
-
-    const urlParts = fileUrl.split("/category-files/");
-    const storagePath = urlParts[1] ? decodeURIComponent(urlParts[1]) : null;
 
     if (storagePath) {
       await supabase.storage.from("category-files").remove([storagePath]);
@@ -43,6 +67,8 @@ const PdfFileItem = ({ id, title, fileUrl, neonColor, index, isAdmin, onDeleted 
     toast.success("Arquivo excluído.");
     onDeleted();
   };
+
+  const activeUrl = signedUrl ?? fileUrl;
 
   return (
     <motion.div
@@ -70,7 +96,7 @@ const PdfFileItem = ({ id, title, fileUrl, neonColor, index, isAdmin, onDeleted 
             {showViewer ? <EyeOff size={16} /> : <Eye size={16} />}
           </button>
           <a
-            href={fileUrl}
+            href={activeUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="p-2 text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-secondary"
@@ -79,7 +105,7 @@ const PdfFileItem = ({ id, title, fileUrl, neonColor, index, isAdmin, onDeleted 
             <ExternalLink size={16} />
           </a>
           <a
-            href={fileUrl}
+            href={activeUrl}
             download
             className="p-2 text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-secondary"
             title="Baixar"
@@ -108,7 +134,7 @@ const PdfFileItem = ({ id, title, fileUrl, neonColor, index, isAdmin, onDeleted 
             className="border-t border-border"
           >
             <iframe
-              src={`${fileUrl}#toolbar=1&navpanes=1`}
+              src={`${activeUrl}#toolbar=1&navpanes=1`}
               className="w-full h-full"
               title={title}
             />
