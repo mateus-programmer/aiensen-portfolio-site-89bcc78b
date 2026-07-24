@@ -105,12 +105,14 @@ const SemesterCards = ({ categoryId, searchQuery = "" }: Props) => {
   const computed = semesters.map((s) => {
     const subjects = subjectsBySemester[s.slug] ?? [];
     const total = subjects.length || s.totalSubjects;
-    const completed = subjects.filter((sub) =>
+    const detected = subjects.filter((sub) =>
       items.some(
         (it: { tags: string[] | null; file_url: string | null }) =>
           !!it.file_url && Array.isArray(it.tags) && it.tags.includes(sub.tag)
       )
     ).length;
+    // Respect manual baseline in config; auto-progress only raises the count.
+    const completed = Math.max(s.completedSubjects, detected);
     const status: SemesterInfo["status"] =
       s.status === "agendado"
         ? "agendado"
