@@ -125,6 +125,19 @@ A rota `/admin` é protegida por autenticação e papel de administrador (`user_
 
 ---
 
+## Segurança
+
+Foram aplicadas medidas de segurança no backend e no frontend:
+
+- **Row Level Security (RLS):** todas as tabelas públicas possuem RLS ativado; a tabela `profiles` só permite leitura por usuários autenticados.
+- **Papéis de usuário:** controle de administrador via tabela separada `user_roles`, consultada por função `SECURITY DEFINER` com privilégios mínimos.
+- **Bucket privado:** o bucket `category-files` não permite acesso público; arquivos são servidos exclusivamente por URLs assinadas de curta duração.
+- **Visualização segura de PDFs:** o leitor de PDFs utiliza URLs assinadas geradas no momento da exibição, com renovação automática.
+- **Proteção contra senhas vazadas:** ativada a verificação HIBP (Have I Been Pwned) durante cadastro e alteração de senha.
+- **Recuperação de senha:** fluxo funcional de "Esqueci minha senha" com envio de link seguro e cooldown entre reenvios.
+
+---
+
 ## Design e Identidade Visual
 
 - **Estilo:** Cyberpunk / neon minimalista
