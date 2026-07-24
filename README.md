@@ -20,10 +20,11 @@ O AIensen funciona como um hub central de conteúdos criados por mim e com auxí
   - Programação (linguagens de programação)
   - Teologia (tópicos doutrinários)
   - Ferramentas de IA
-- **Painel Admin** protegido por autenticação, com gerenciamento de categorias e itens de conteúdo
+- **Painel Admin** protegido por autenticação e papel de administrador (`user_roles`)
 - **Upload de PDFs** com tagueamento automático contextual
-- **Autenticação** por email/senha com redirect pós-login
+- **Autenticação** por email/senha com redirect pós-login e recuperação de senha
 - **Design responsivo** e animações com Framer Motion
+- **Segurança reforçada** com RLS, bucket privado, URLs assinadas e proteção de senhas vazadas (HIBP)
 
 ---
 
@@ -121,6 +122,19 @@ A rota `/admin` é protegida por autenticação e papel de administrador (`user_
 - Gerenciar itens de conteúdo (texto e PDF)
 - Fazer upload de arquivos PDF até 20 MB
 - Visualizar conteúdos com tagueamento automático contextual
+
+---
+
+## Segurança
+
+Foram aplicadas medidas de segurança no backend e no frontend:
+
+- **Row Level Security (RLS):** todas as tabelas públicas possuem RLS ativado; a tabela `profiles` só permite leitura por usuários autenticados.
+- **Papéis de usuário:** controle de administrador via tabela separada `user_roles`, consultada por função `SECURITY DEFINER` com privilégios mínimos.
+- **Bucket privado:** o bucket `category-files` não permite acesso público; arquivos são servidos exclusivamente por URLs assinadas de curta duração.
+- **Visualização segura de PDFs:** o leitor de PDFs utiliza URLs assinadas geradas no momento da exibição, com renovação automática.
+- **Proteção contra senhas vazadas:** ativada a verificação HIBP (Have I Been Pwned) durante cadastro e alteração de senha.
+- **Recuperação de senha:** fluxo funcional de "Esqueci minha senha" com envio de link seguro e cooldown entre reenvios.
 
 ---
 
