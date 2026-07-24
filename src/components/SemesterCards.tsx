@@ -38,8 +38,8 @@ export const semesters: SemesterInfo[] = [
     accentHsl: "55 100% 55%",
     description: "Estruturas de dados, paradigmas e modelagem de sistemas.",
     tag: "Segundo Semestre 2025",
-    totalSubjects: 6,
-    completedSubjects: 6,
+    totalSubjects: 5,
+    completedSubjects: 5,
   },
   {
     name: "Primeiro Semestre 2026",
