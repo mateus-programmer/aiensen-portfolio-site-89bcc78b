@@ -1,10 +1,13 @@
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Cpu, ChevronRight } from "lucide-react";
+import { Cpu, ChevronRight, Trophy } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
 import HighlightMatch from "@/components/HighlightMatch";
 import { supabase } from "@/integrations/supabase/client";
 import { subjectsBySemester } from "@/components/SubjectCards";
+import { useAuth } from "@/contexts/AuthContext";
 
 
 export interface SemesterInfo {
