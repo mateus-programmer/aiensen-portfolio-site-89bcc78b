@@ -127,6 +127,31 @@ const SemesterCards = ({ categoryId, searchQuery = "" }: Props) => {
     return { ...s, totalSubjects: total, completedSubjects: completed, status };
   });
 
+  // Notifica o usuário responsável quando um semestre atinge 5/5 (Concluído).
+  // Dispara apenas uma vez por usuário/semestre (persistido no localStorage).
+  const { user } = useAuth();
+  useEffect(() => {
+    if (!user) return;
+    computed.forEach((s) => {
+      if (s.status !== "concluido" || s.completedSubjects < s.totalSubjects) return;
+      const key = `semester-complete-notified:${user.id}:${s.slug}`;
+      if (localStorage.getItem(key)) return;
+      localStorage.setItem(key, "1");
+      toast.success(`${s.name} concluído!`, {
+        description: `Todas as ${s.totalSubjects} matérias possuem material anexado (${s.completedSubjects}/${s.totalSubjects} · 100%).`,
+        icon: <Trophy size={16} />,
+        duration: 8000,
+        action: {
+          label: "Abrir",
+          onClick: () => navigate(`/categoria/${categoryId}/semestre/${s.slug}`),
+        },
+      });
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id, JSON.stringify(computed.map((s) => [s.slug, s.status, s.completedSubjects]))]);
+
+
+
   const filtered = query
     ? computed.filter(
         (s) =>
