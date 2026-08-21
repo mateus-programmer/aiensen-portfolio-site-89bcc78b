@@ -8,6 +8,7 @@ import HighlightMatch from "@/components/HighlightMatch";
 import { supabase } from "@/integrations/supabase/client";
 import { subjectsBySemester } from "@/components/SubjectCards";
 import { useAuth } from "@/contexts/AuthContext";
+import { createNotification, useNotifications } from "@/hooks/useNotifications";
 
 
 export interface SemesterInfo {
@@ -128,27 +129,41 @@ const SemesterCards = ({ categoryId, searchQuery = "" }: Props) => {
   });
 
   // Notifica o usuário responsável quando um semestre atinge 5/5 (Concluído).
-  // Dispara apenas uma vez por usuário/semestre (persistido no localStorage).
+  // A notificação fica registrada na central (dedupe por event_key no banco).
   const { user } = useAuth();
+  const { invalidate } = useNotifications();
   useEffect(() => {
     if (!user) return;
-    computed.forEach((s) => {
-      if (s.status !== "concluido" || s.completedSubjects < s.totalSubjects) return;
-      const key = `semester-complete-notified:${user.id}:${s.slug}`;
-      if (localStorage.getItem(key)) return;
-      localStorage.setItem(key, "1");
-      toast.success(`${s.name} concluído!`, {
-        description: `Todas as ${s.totalSubjects} matérias possuem material anexado (${s.completedSubjects}/${s.totalSubjects} · 100%).`,
-        icon: <Trophy size={16} />,
-        duration: 8000,
-        action: {
-          label: "Abrir",
-          onClick: () => navigate(`/categoria/${categoryId}/semestre/${s.slug}`),
-        },
-      });
-    });
+    (async () => {
+      let created = false;
+      for (const s of computed) {
+        if (s.status !== "concluido" || s.completedSubjects < s.totalSubjects) continue;
+        const isNew = await createNotification({
+          userId: user.id,
+          eventKey: `semester-complete:${s.slug}`,
+          type: "success",
+          title: `${s.name} concluído!`,
+          body: `Todas as ${s.totalSubjects} matérias possuem material anexado (${s.completedSubjects}/${s.totalSubjects} · 100%).`,
+          link: `/categoria/${categoryId}/semestre/${s.slug}`,
+        });
+        if (isNew) {
+          created = true;
+          toast.success(`${s.name} concluído!`, {
+            description: `Progresso 100% (${s.completedSubjects}/${s.totalSubjects}).`,
+            icon: <Trophy size={16} />,
+            duration: 8000,
+            action: {
+              label: "Abrir",
+              onClick: () => navigate(`/categoria/${categoryId}/semestre/${s.slug}`),
+            },
+          });
+        }
+      }
+      if (created) invalidate();
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id, JSON.stringify(computed.map((s) => [s.slug, s.status, s.completedSubjects]))]);
+
 
 
 
