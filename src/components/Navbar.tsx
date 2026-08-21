@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, LogIn, Shield, LogOut, Search } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import NotificationCenter from "@/components/NotificationCenter";
 
 const links = [
   { label: "Home", href: "#" },
@@ -84,6 +85,7 @@ const Navbar = ({ search: externalSearch, onSearchChange }: NavbarProps = {}) =>
 
           {user ? (
             <div className="flex items-center gap-3">
+              <NotificationCenter />
               {isAdmin && (
                 <button onClick={() => navigate("/admin")} className="inline-flex items-center gap-1.5 font-alt text-sm text-neon-yellow hover:text-primary transition-colors">
                   <Shield size={14} /> Admin
@@ -101,9 +103,13 @@ const Navbar = ({ search: externalSearch, onSearchChange }: NavbarProps = {}) =>
         </div>
 
         {/* Mobile toggle */}
-        <button onClick={() => setOpen(!open)} className="md:hidden text-foreground" aria-label="Menu">
-          {open ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        <div className="md:hidden flex items-center gap-4">
+          <NotificationCenter onNavigate={() => setOpen(false)} />
+          <button onClick={() => setOpen(!open)} className="text-foreground" aria-label="Menu">
+            {open ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+
       </div>
 
       {/* Mobile menu */}
