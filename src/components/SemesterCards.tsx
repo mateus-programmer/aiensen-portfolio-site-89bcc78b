@@ -8,6 +8,7 @@ import HighlightMatch from "@/components/HighlightMatch";
 import { supabase } from "@/integrations/supabase/client";
 import { subjectsBySemester } from "@/components/SubjectCards";
 import { useAuth } from "@/contexts/AuthContext";
+import { createNotification, useNotifications } from "@/hooks/useNotifications";
 
 
 export interface SemesterInfo {
